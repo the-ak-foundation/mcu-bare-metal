@@ -163,8 +163,8 @@ void zw_game_grass_display() {
 			view_render.drawPixel(x,     gy,     WHITE);
 			view_render.drawPixel(x + 1, gy,     WHITE);
 			view_render.drawPixel(x + 2, gy,     WHITE);
-			view_render.drawPixel(x + 2, gy - 1, WHITE);
-			view_render.drawPixel(x + 3, gy - 1, WHITE);
+			//view_render.drawPixel(x + 2, gy - 1, WHITE);
+			//view_render.drawPixel(x + 3, gy - 1, WHITE);
 		}
 	}
 }
