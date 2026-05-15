@@ -144,6 +144,7 @@ void scr_charts_game_handle(ak_msg_t* msg) {
 					AC_DISPLAY_CHARTS_SPIDER_UPDATE, \
 					AC_DISPLAY_CHARTS_SPIDER_UPDATE_INTERVAL, \
 					TIMER_ONE_SHOT);
+		BUZZER_PlayTones(melody);
 	}
 		break;
 
