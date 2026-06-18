@@ -15,12 +15,12 @@ SOC_FLASH_BYTES = 131072 # 128KB
 SOC_SRAM_BYTES = 16384	 # 16KB
 FLASH_BASE_ADDR_VAL = 0x08000000
 
-# Name of build target ex: ak-base-kit-stm32l151-application.bin
-NAME_MODULE = ak-base-kit-stm32l151-application
+# Name of build target ex: 11m-application.bin
+NAME_MODULE = 11m-application
 PROJECT = $(NAME_MODULE)
 
-GCC_PATH			= $(HOME)/Workspace/Tools/gcc-arm-none-eabi-10.3-2021.10
-PROGRAMER_PATH		= $(HOME)/workspace/tools/STM32CubeProgrammer/bin
+GCC_PATH		= /home/phuoc/Workspace/Tools/gcc-arm-none-eabi-10.3-2021.10-x86_64-linux/gcc-arm-none-eabi-10.3-2021.10
+PROGRAMER_PATH		= /home/phuoc/Workspace/Tools/STM32CubeProgrammer/bin
 OPENOCD_CFG_PATH	= /usr/local/share/openocd/scripts/board/stm32ldiscovery.cfg
 
 # App start address, that need sync with declare in linker file and interrupt vector table.
@@ -174,12 +174,12 @@ HARDWARE_OPTION += \
 
 # Console log compile option
 CONSOLE_OPTION +=			\
-		-DLOGIN_PRINT_EN	\
-		-DSYS_PRINT_EN		\
-		-DAPP_PRINT_EN		\
-		-DSYS_DBG_EN		\
-		-DAPP_DBG_EN		\
-		-DAPP_DBG_SIG_EN	\
+		-ULOGIN_PRINT_EN	\
+		-USYS_PRINT_EN		\
+		-UAPP_PRINT_EN		\
+		-USYS_DBG_EN		\
+		-UAPP_DBG_EN		\
+		-UAPP_DBG_SIG_EN	\
 
 GENERAL_FLAGS +=			\
 		$(RTOS_DEV_OPTION)	\
