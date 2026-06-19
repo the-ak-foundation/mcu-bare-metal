@@ -10,20 +10,21 @@ void em_game_frame_display()
 {
     view_render.clear();
 
-    // Khung thành từ mép trên màn hình
-    view_render.drawRect(10, 0, 92, 28, WHITE);
-    view_render.drawRect(14, 4, 84, 24, WHITE);
+    // Khung thành ngoài
+    view_render.fillRect(18, 0, 88, 3, WHITE);   // xà ngang ngoài
+    view_render.fillRect(18, 0, 3, 30, WHITE);   // cột trái ngoài
+    view_render.fillRect(103, 0, 3, 30, WHITE);  // cột phải ngoài
 
     // Vạch ngang sân
-    view_render.drawLine(0, 27, LCD_WIDTH - 1, 27, WHITE);
+    view_render.fillRect(0, 28, LCD_WIDTH, 2, WHITE);
 
     // Vạch sân phối cảnh
-    view_render.drawLine(18, 27, 2, LCD_HEIGHT - 9, WHITE);
-    view_render.drawLine(106, 31, LCD_WIDTH - 3, LCD_HEIGHT - 5, WHITE);
-    view_render.drawLine(2, LCD_HEIGHT - 5, LCD_WIDTH - 3, LCD_HEIGHT - 5, WHITE);
+    view_render.drawLine(14, 30, 2, LCD_HEIGHT - 22, WHITE);
+    view_render.drawLine(110, 30, LCD_WIDTH - 3, LCD_HEIGHT - 22, WHITE);
+    view_render.fillRect(2, LCD_HEIGHT - 22, LCD_WIDTH - 4, 2, WHITE);
 
     // Chấm pen
-    view_render.fillRect(61, 43, 3, 3, WHITE);
+    view_render.fillRect(61, 45, 3, 3, WHITE);
 }
 
 /*****************************************************************************/

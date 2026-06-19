@@ -69,13 +69,13 @@ const unsigned char PROGMEM bitmap_dolphin[] = {
 /*****************************************************************************/
 /* scr_game_11m - Bitmap*/
 /*****************************************************************************/
-// 'bitmap_ball', 10x10px
+// 'bitmap_ball', 7x7px
 const unsigned char PROGMEM bitmap_ball[] = {
     0x38,
     0x7c,
-    0xee,
+    0xff,
     0xfe,
-    0xee,
+    0xff,
     0x7c,
     0x38
 };
