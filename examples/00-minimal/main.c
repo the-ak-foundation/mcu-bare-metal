@@ -35,6 +35,8 @@ __attribute__((section(".isr_vector"))) void (*const g_pfnVectors[16 + 45])(void
 
 int main(void)
 {
+	*((volatile uint32_t*)0xE000ED08) = 0x08003000;
+
 	for (;;)
 	{
 	}
