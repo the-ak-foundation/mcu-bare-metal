@@ -1,0 +1,127 @@
+
+Discarded input sections
+
+ .group         0x0000000000000000        0xc build_00-minimal-application/main.o
+ .group         0x0000000000000000        0xc build_00-minimal-application/main.o
+ .text          0x0000000000000000        0x0 build_00-minimal-application/main.o
+ .data          0x0000000000000000        0x0 build_00-minimal-application/main.o
+ .bss           0x0000000000000000        0x0 build_00-minimal-application/main.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+FLASH            0x0000000008000000 0x0000000000020000 xr
+SRAM             0x0000000020000000 0x0000000000004000 xrw
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+LOAD build_00-minimal-application/main.o
+LOAD /home/phuoc/Workspace/Tools/gcc-arm-none-eabi-10.3-2021.10-x86_64-linux/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp/libc_nano.a
+LOAD /home/phuoc/Workspace/Tools/gcc-arm-none-eabi-10.3-2021.10-x86_64-linux/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/thumb/v7-m/nofp/libgcc.a
+                0x0000000020004000                _estack = (ORIGIN (SRAM) + LENGTH (SRAM))
+
+.isr_vector     0x0000000008000000       0xf4
+ *(.isr_vector)
+ .isr_vector    0x0000000008000000       0xf4 build_00-minimal-application/main.o
+                0x0000000008000000                g_pfnVectors
+
+.text           0x00000000080000f4       0x4c
+ *(.text*)
+ .text.Reset_Handler
+                0x00000000080000f4       0x44 build_00-minimal-application/main.o
+                0x00000000080000f4                Reset_Handler
+ .text.main     0x0000000008000138        0x6 build_00-minimal-application/main.o
+                0x0000000008000138                main
+ *(.rodata*)
+                0x0000000008000140                . = ALIGN (0x4)
+ *fill*         0x000000000800013e        0x2 
+
+.glue_7         0x0000000008000140        0x0
+ .glue_7        0x0000000008000140        0x0 linker stubs
+
+.glue_7t        0x0000000008000140        0x0
+ .glue_7t       0x0000000008000140        0x0 linker stubs
+
+.vfp11_veneer   0x0000000008000140        0x0
+ .vfp11_veneer  0x0000000008000140        0x0 linker stubs
+
+.v4_bx          0x0000000008000140        0x0
+ .v4_bx         0x0000000008000140        0x0 linker stubs
+
+.iplt           0x0000000008000140        0x0
+ .iplt          0x0000000008000140        0x0 build_00-minimal-application/main.o
+
+.rel.dyn        0x0000000008000140        0x0
+ .rel.iplt      0x0000000008000140        0x0 build_00-minimal-application/main.o
+
+.data           0x0000000020000000        0x0 load address 0x0000000008000140
+                0x0000000020000000                _sdata = .
+ *(.data*)
+                0x0000000020000000                . = ALIGN (0x4)
+                0x0000000020000000                _edata = .
+                0x0000000008000140                _sidata = LOADADDR (.data)
+
+.igot.plt       0x0000000020000000        0x0 load address 0x0000000008000140
+ .igot.plt      0x0000000020000000        0x0 build_00-minimal-application/main.o
+
+.bss            0x0000000020000000        0x0 load address 0x0000000008000140
+                0x0000000020000000                _sbss = .
+ *(.bss*)
+ *(COMMON)
+                0x0000000020000000                . = ALIGN (0x4)
+                0x0000000020000000                _ebss = .
+                0x0000000020000000                . = ALIGN (0x8)
+                0x0000000020000000                _end = .
+OUTPUT(build_00-minimal-application/00-minimal-application.elf elf32-littlearm)
+LOAD linker stubs
+
+.debug_info     0x0000000000000000      0x154
+ .debug_info    0x0000000000000000      0x154 build_00-minimal-application/main.o
+
+.debug_abbrev   0x0000000000000000       0xdc
+ .debug_abbrev  0x0000000000000000       0xdc build_00-minimal-application/main.o
+
+.debug_aranges  0x0000000000000000       0x28
+ .debug_aranges
+                0x0000000000000000       0x28 build_00-minimal-application/main.o
+
+.debug_ranges   0x0000000000000000       0x18
+ .debug_ranges  0x0000000000000000       0x18 build_00-minimal-application/main.o
+
+.debug_macro    0x0000000000000000      0xdd2
+ .debug_macro   0x0000000000000000       0x24 build_00-minimal-application/main.o
+ .debug_macro   0x0000000000000024      0xa60 build_00-minimal-application/main.o
+ .debug_macro   0x0000000000000a84      0x34e build_00-minimal-application/main.o
+
+.debug_line     0x0000000000000000      0x135
+ .debug_line    0x0000000000000000      0x135 build_00-minimal-application/main.o
+
+.debug_str      0x0000000000000000     0x3615
+ .debug_str     0x0000000000000000     0x3615 build_00-minimal-application/main.o
+                                       0x3778 (size before relaxing)
+
+.comment        0x0000000000000000       0x49
+ .comment       0x0000000000000000       0x49 build_00-minimal-application/main.o
+                                         0x4a (size before relaxing)
+
+.ARM.attributes
+                0x0000000000000000       0x2d
+ .ARM.attributes
+                0x0000000000000000       0x2d build_00-minimal-application/main.o
+
+.debug_frame    0x0000000000000000       0x38
+ .debug_frame   0x0000000000000000       0x38 build_00-minimal-application/main.o
+
+Cross Reference Table
+
+Symbol                                            File
+Reset_Handler                                     build_00-minimal-application/main.o
+_ebss                                             build_00-minimal-application/main.o
+_edata                                            build_00-minimal-application/main.o
+_estack                                           build_00-minimal-application/main.o
+_sbss                                             build_00-minimal-application/main.o
+_sdata                                            build_00-minimal-application/main.o
+_sidata                                           build_00-minimal-application/main.o
+g_pfnVectors                                      build_00-minimal-application/main.o
+main                                              build_00-minimal-application/main.o
