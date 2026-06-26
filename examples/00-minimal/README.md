@@ -46,14 +46,14 @@ make clean
 
 <table align="center">
   <tr>
-    <td align="center"><img src="resources/images/00-minimal/minimal-build-binary.png" alt="Build binary" width="1000"/></td>
+    <td align="center"><img src="../resources/images/00-minimal/minimal-build-binary.png" alt="Build binary" width="1000"/></td>
   </tr>
 </table>
 <p align="center"><strong><em>Figure 1:</em></strong> Build binary</p>
 
 <table align="center">
   <tr>
-    <td align="center"><img src="resources/images/00-minimal/minimal-build-successfully.png" alt="Build successfully" width="1000"/></td>
+    <td align="center"><img src="../resources/images/00-minimal/minimal-build-successfully.png" alt="Build successfully" width="1000"/></td>
   </tr>
 </table>
 <p align="center"><strong><em>Figure 1:</em></strong> Build successfully</p>
