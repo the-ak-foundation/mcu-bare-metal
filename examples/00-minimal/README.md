@@ -46,25 +46,21 @@ make clean
 
 <table align="center">
   <tr>
-    <td align="center"><img src="../../resources/images/00-minimal/minimal-build-successfully.png" alt="Build successfully" width="1000"/></td>
+    <td align="center"><img src="../../resources/images/00-minimal/minimal-build-binary.png" alt="Build output" width="1000"/></td>
   </tr>
 </table>
-<p align="center"><strong><em>Figure 1:</em></strong> Build successfully</p>
+<p align="center"><strong><em>Figure 1:</em></strong> Output của <code>make</code></p>
 
-Sau khi chạy `make`, toolchain `arm-none-eabi-gcc` biên dịch `main.c` theo `stm32l151xx.ld` và sinh ra file ELF cùng file `.bin` trong thư mục `build_00-minimal-application/`. Lệnh `arm-none-eabi-size` in ra kích thước các section: `.text` chứa vector table + `Reset_Handler` + `main()` rỗng, `.data` và `.bss` đều bằng 0 vì chương trình chưa khai báo biến nào. Không có warning hay error nghĩa là linker đã đặt vector table đúng địa chỉ `0x08000000` và toolchain hoạt động bình thường.
+Chạy `make` build ra file ELF + `.bin` trong `build_00-minimal-application/`. Chương trình chiếm 320 byte Flash (0.24%), `.data` và `.bss` đều bằng 0 vì chưa khai báo biến — chỉ có vector table, `Reset_Handler` và `main()` rỗng.
 
 <table align="center">
   <tr>
-    <td align="center"><img src="../../resources/images/00-minimal/minimal-build-binary.png" alt="Build binary" width="1000"/></td>
+    <td align="center"><img src="../../resources/images/00-minimal/minimal-build-successfully.png" alt="Flash successfully" width="1000"/></td>
   </tr>
 </table>
-<p align="center"><strong><em>Figure 2:</em></strong> Nội dung file binary</p>
+<p align="center"><strong><em>Figure 2:</em></strong> Output của <code>make flash</code></p>
 
-Dump file `.bin` bằng `xxd` (hoặc `hexdump`) cho thấy 8 byte đầu chính là nội dung vector table tối thiểu mà CPU Cortex-M3 cần khi reset:
-- 4 byte đầu (`0x20004000`) là giá trị nạp vào **MSP** (Main Stack Pointer) — bằng `_estack`, tức đỉnh SRAM 16 KB tại `0x20000000 + 0x4000`.
-- 4 byte tiếp theo là địa chỉ **Reset_Handler** (bit 0 = 1 do Thumb mode của Cortex-M).
-
-Khi cấp nguồn / reset, CPU đọc 2 word này từ `0x08000000`, nạp SP, rồi nhảy vào `Reset_Handler` → clear `.bss`, copy `.data`, gọi `main()`. Chương trình chạy đúng nghĩa là chip sống và pipeline build → flash → boot đã thông.
+Chạy `make flash` nạp file `.bin` xuống MCU qua ST-Link bằng STM32CubeProgrammer. Log cho thấy ST-Link detect đúng STM32L151 (Cortex-M3, 128 KB Flash), erase + program + verify đều OK, kết thúc bằng `Download verified successfully` và software reset → chip chạy chương trình.
 
 ## Contact & Support
 
