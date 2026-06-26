@@ -60,10 +60,10 @@ arm-none-eabi-gdb 00-minimal.elf
 
 <p style="font-size: 20px;"><strong>Cao Trong Phuoc</strong> - Software Engineer - Embedded Systems</p>
 
-```Note
+``` Note
 Thank you for visiting this repository.
 If you have any questions, suggestions, or feedback about this project or firmware development, feel free to contact me directly.
-````
+```
 
 <a href="https://github.com/caotrongphuoc">
   <img src="https://img.shields.io/badge/GitHub-caotrongphuoc-181717?style=for-the-badge&logo=github&logoColor=white"/>
@@ -72,8 +72,3 @@ If you have any questions, suggestions, or feedback about this project or firmwa
 <a href="https://www.linkedin.com/in/cao-trong-phuoc/">
   <img src="https://img.shields.io/badge/LinkedIn-Cao%20Trong%20Phuoc-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white"/>
 </a>
-
-<a href="mailto:caotrongphuoc@gmail.com">
-  <img src="https://img.shields.io/badge/Gmail-caotrongphuoc%40gmail.com-EA4335?style=for-the-badge&logo=gmail&logoColor=white"/>
-</a>
-
