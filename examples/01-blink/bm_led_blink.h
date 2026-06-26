@@ -1,5 +1,5 @@
-#ifndef __BM_LED_BLINK_H__
-#define __BM_LED_BLINK_H__
+#ifndef BM_LED_BLINK_H
+#define BM_LED_BLINK_H
 
 #include <stdint.h>
 
@@ -31,15 +31,22 @@ typedef struct
 	volatile uint32_t APB1ENR;
 } RCC_TypeDef;
 
+typedef struct
+{
+	volatile uint32_t CPUID;
+	volatile uint32_t ICSR;
+	volatile uint32_t VTOR;
+} SCB_TypeDef;
+
 #define GPIOB ((GPIO_TypeDef*)0x40020400)
 #define RCC ((RCC_TypeDef*)0x40023800)
+#define SCB ((SCB_TypeDef*)0xE000ED00)
 
 #define RCC_AHBENR_GPIOBEN (1U << 1)
+
+#define APP_START_ADDR 0x08003000U
 
 #define LED_PORT GPIOB
 #define LED_PIN 8
 
-void gpio_pin_output(GPIO_TypeDef* port, uint32_t pin);
-void gpio_write(GPIO_TypeDef* port, uint32_t pin, uint32_t state);
-
-#endif //__BM_LED_BLINK_H__
+#endif
