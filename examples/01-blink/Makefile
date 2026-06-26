@@ -9,7 +9,7 @@ Print = @echo "~"
 SOC_NAME            = STM32L151CBT6
 SOC_FLASH_BYTES     = 131072 # 128KB
 SOC_SRAM_BYTES      = 16384  # 16KB
-FLASH_BASE_ADDR_VAL = 0x08003000
+FLASH_BASE_ADDR_VAL = 0x08000000
 
 # Name of build target ex: 01-blink-application.bin
 NAME_MODULE = 01-blink-application
@@ -35,7 +35,7 @@ OBJECTS_DIR = build_$(NAME_MODULE)
 TARGET      = $(OBJECTS_DIR)/$(NAME_MODULE).elf
 LDFILE      = stm32l151xx.ld
 
-SOURCES = main.c
+SOURCES = bm_led_blink.c
 OBJECTS = $(patsubst %.c, $(OBJECTS_DIR)/%.o, $(SOURCES))
 
 # The command for calling the compiler.
