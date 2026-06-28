@@ -3,10 +3,6 @@
 
 #include <stdint.h>
 
-#ifndef APP_START_ADDR
-#error "APP_START_ADDR must be defined via -D flag in Makefile"
-#endif
-
 #define RCC_AHBENR (*(volatile uint32_t*)0x4002381C)
 #define GPIOB_MODER (*(volatile uint32_t*)0x40020400)
 #define GPIOB_BSRR (*(volatile uint32_t*)0x40020418)
