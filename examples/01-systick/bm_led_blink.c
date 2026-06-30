@@ -22,7 +22,6 @@ __attribute__((naked, noreturn)) void Reset_Handler(void)
 	main();
 	for (;;)
 	{
-		(void)0;
 	}
 }
 
@@ -50,12 +49,11 @@ __attribute__((section(".isr_vector"))) void (*const g_pfnVectors[16])(void) = {
     SysTick_Handler,
 };
 
-static void delay(uint32_t ms)
+static void delay_ms(uint32_t ms)
 {
 	uint32_t start = g_tick;
 	while ((g_tick - start) < ms)
 	{
-		__asm__("nop");
 	}
 }
 
@@ -71,9 +69,9 @@ int main(void)
 	for (;;)
 	{
 		GPIOB_BSRR = (1U << LED_PIN);
-		delay_ms(500);
+		delay_ms(100);
 		GPIOB_BSRR = (1U << (LED_PIN + 16));
-		delay_ms(500);
+		delay_ms(100);
 	}
 	return 0;
 }
