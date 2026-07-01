@@ -1,34 +1,36 @@
-# 01-systick-c — SysTick-based millisecond delay
+# 01-systick-c — SysTick millisecond delay
 
-Blink LED trên PB8 của **AK Embedded Base Kit (STM32L151C8T6)** dùng **SysTick timer** để đo thời gian chính xác — vẫn hoàn toàn bare-metal, không HAL, không CMSIS.
+Same LED blink on PB8, but the delay is now driven by the SysTick timer instead of a busy loop. Still fully bare-metal, no HAL, no CMSIS.
 
 ## Result
 
-<!-- Chèn video/gif blink LED ở đây (đề xuất: đặt trong resources/images/) -->
+<!-- Add LED blink video / gif here -->
 
 ## How it works
 
-Kế thừa toàn bộ nền tảng từ [`00-minimal-c`](../00-minimal-c/) (vector table, Reset_Handler, linker script, memory-mapped I/O). Điểm mới:
+Reuses everything from [`00-minimal-c`](../00-minimal-c/) (vector table, `Reset_Handler`, linker script, memory-mapped I/O). What's new:
 
-1. **Vector table mở rộng** — tăng từ 2 lên 16 phần tử. Slot `[15]` chứa `SysTick_Handler` (vị trí ARM cố định cho SysTick exception).
-2. **SysTick timer** (`led_blink.c`, `led_blink.h`) — 3 thanh ghi trong System Control Space (`0xE000_E010`):
-   - `SYSTICK_LOAD = SYSCLK_HZ / TICK_HZ - 1 = 2096` → chu kỳ interrupt 1ms (MSI mặc định 2.097 MHz).
-   - `SYSTICK_CTRL = 0b111` → bật counter, bật interrupt, dùng SYSCLK.
-3. **`SysTick_Handler`** — mỗi 1ms tăng biến `volatile uint32_t g_tick`.
-4. **`delay_ms(ms)`** — poll `g_tick`, dùng phép trừ unsigned nên an toàn khi biến tràn 32-bit.
-5. **`main()`** — setup GPIO như bài trước, thêm setup SysTick, rồi blink với `delay_ms(100)`.
+1. **Vector table grows from 2 to 16 entries.** Slot `[15]` holds `SysTick_Handler` — that slot is fixed by the ARM architecture.
+2. **SysTick registers** at `0xE000_E010`:
+   - `LOAD = SYSCLK_HZ / TICK_HZ - 1 = 2096` → interrupt every 1 ms (MSI is 2.097 MHz by default).
+   - `CTRL = 0b111` → enable counter, enable interrupt, use SYSCLK.
+3. **`SysTick_Handler`** increments `volatile uint32_t g_tick` every 1 ms.
+4. **`delay_ms(ms)`** polls `g_tick`. It uses unsigned subtraction, so it stays correct when the counter wraps.
+5. **`main()`** sets up GPIO and SysTick, then blinks with `delay_ms(100)`.
 
-Build + flash + debug:
+Build / flash / debug:
 ```bash
-make          # build .elf và .bin
-make flash    # ghi qua ST-Link (STM32CubeProgrammer)
-make debug    # openocd + arm-none-eabi-gdb
+make
+make flash
+make debug
 ```
 
-## Ý nghĩa
+## Meaning
 
-Đây là bài đầu tiên **có interrupt**. So với `00-minimal-c` chỉ dùng busy-loop `nop` (thời gian không xác định, phụ thuộc tần số CPU và optimizer), bài này giới thiệu:
+First example with an interrupt. Instead of "how many nops equals 100 ms?" we get real time. Introduces three things:
 
-- **Cortex-M exception mechanism** — cách CPU tự động lưu context, jump vào ISR khi timer đếm về 0.
-- **Timing chính xác** — delay 100ms nghĩa là *thực sự* 100ms, không phụ thuộc code trong loop.
-- **Chia sẻ dữ liệu giữa ISR và main** — `volatile` để compiler không cache biến `g_tick`.
+- The Cortex-M exception mechanism (CPU saves context and jumps to ISR).
+- Precise timing that doesn't depend on CPU frequency or optimizer choices.
+- Sharing data between an ISR and `main()` — hence `volatile` on `g_tick`.
+
+Every peripheral we touch later (UART, timers, ADC) reuses the same pattern: enable clock, configure registers, handle interrupt via the vector table.
