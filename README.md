@@ -67,5 +67,4 @@ make debug    # openocd + arm-none-eabi-gdb
 ## References
 
 - [STM32World/stm32fun](https://github.com/STM32World/stm32fun) — bare-metal STM32 coding style
-- [the-ak-foundation/akos](https://github.com/the-ak-foundation/akos) — repo layout and Makefile conventions
 - STM32L1 reference manual (RM0038) and STM32L151CBT6 datasheet in [`resources/datasheet/`](resources/datasheet/)
