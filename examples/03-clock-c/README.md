@@ -66,5 +66,3 @@ Every real STM32 firmware does this dance. Changing one number (the CPU clock) t
 - **PWR** — voltage scaling gates the maximum SYSCLK allowed.
 - **FLASH** — the flash controller needs to know how fast reads come in.
 - **SysTick** — its reload value depends on SYSCLK, so anything timing-related breaks when the clock changes.
-
-The code is still fully hand-written — no CMSIS, no HAL. The next example (`04-cmsis-core-c`) folds in the CMSIS-Core headers so we stop writing SysTick and NVIC access by hand.
