@@ -37,9 +37,12 @@ typedef struct
 	volatile uint32_t CALIB; // 0x0C
 } SysTick_TypeDef;
 
-#define GPIOB ((GPIO_TypeDef*)0x40020400UL)
-#define RCC ((RCC_TypeDef*)0x40023800UL)
-#define SysTick ((SysTick_TypeDef*)0xE000E010UL)
+// Peripheral base pointers. Field offsets above + these bases give the same
+// absolute addresses as 00-minimal-c / 01-systick-c. E.g. GPIOB->BSRR compiles
+// to *(volatile uint32_t*)(0x40020400 + 0x18) = 0x40020418.
+#define GPIOB   ((GPIO_TypeDef*)   0x40020400UL) // GPIOB base
+#define RCC     ((RCC_TypeDef*)    0x40023800UL) // RCC base
+#define SysTick ((SysTick_TypeDef*)0xE000E010UL) // SysTick base
 
 #define LED_PIN 8
 #define SYSCLK_HZ 2097000U
