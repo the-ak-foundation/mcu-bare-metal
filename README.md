@@ -56,9 +56,8 @@ The visible result is the same across every example — this single clip shows w
 | 00 | [`00-minimal-c`](examples/00-minimal-c/) | Vector table, `Reset_Handler`, linker script, `#define` register access, busy-loop delay |
 | 01 | [`01-systick-c`](examples/01-systick-c/) | SysTick interrupt for millisecond timing |
 | 02 | [`02-struct-c`](examples/02-struct-c/) | `typedef struct` register access (CMSIS-style, still hand-written) |
-| 03 | [`03-clock-c`](examples/03-clock-c/) | PLL clock setup — SYSCLK 32 MHz from HSI |
 
-Planned next: `04-cmsis-core-c`, `05-cmsis-device-c`, `06-hal-c`.
+Planned next: `03-cmsis-core-c`, `04-cmsis-device-c`, `05-hal-c`.
 
 ## Quick start
 
