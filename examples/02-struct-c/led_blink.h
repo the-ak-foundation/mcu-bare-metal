@@ -3,15 +3,7 @@
 
 #include <stdint.h>
 
-// STM32 peripherals — described as C structs. Each field's position in the
-// struct equals its register offset in the peripheral block. Access via
-// base pointer + arrow: compiler does the offset math automatically.
-//
-//   GPIOB->MODER → *(volatile uint32_t*)(0x40020400 + 0x00)
-//   GPIOB->BSRR  → *(volatile uint32_t*)(0x40020400 + 0x18)
-//   RCC->AHBENR  → *(volatile uint32_t*)(0x40023800 + 0x1C)
-
-// GPIO register block — RM0038 §7.4 (up to BSRR at offset 0x18)
+// GPIO register block — (At offset 0x00..0x18)
 typedef struct
 {
 	volatile uint32_t MODER;   // 0x00: port mode
@@ -23,7 +15,7 @@ typedef struct
 	volatile uint32_t BSRR;    // 0x18: bit set/reset
 } GPIO_TypeDef;
 
-// RCC register block — RM0038 §6.3 (up to AHBENR at offset 0x1C)
+// RCC register block — (At AHBENR, offset 0x1C)
 typedef struct
 {
 	volatile uint32_t CR;       // 0x00
@@ -45,10 +37,9 @@ typedef struct
 	volatile uint32_t CALIB; // 0x0C
 } SysTick_TypeDef;
 
-// Peripheral base pointers
-#define GPIOB   ((GPIO_TypeDef*)   0x40020400UL) // GPIOB base
-#define RCC     ((RCC_TypeDef*)    0x40023800UL) // RCC base
-#define SysTick ((SysTick_TypeDef*)0xE000E010UL) // SysTick base
+#define GPIOB ((GPIO_TypeDef*)0x40020400UL)
+#define RCC ((RCC_TypeDef*)0x40023800UL)
+#define SysTick ((SysTick_TypeDef*)0xE000E010UL)
 
 #define LED_PIN 8
 #define SYSCLK_HZ 2097000U
