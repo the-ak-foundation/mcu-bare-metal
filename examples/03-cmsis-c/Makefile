@@ -7,7 +7,7 @@ OPENOCD_CFG_PATH	= /usr/share/openocd/scripts/board/stm32ldiscovery.cfg
 
 APP_START_ADDR = 0x08000000
 
-CFLAGS  = -mcpu=cortex-m3 -mthumb -Os -g -Wall -ffreestanding -nostdlib -DAPP_START_ADDR=$(APP_START_ADDR)
+CFLAGS  = -mcpu=cortex-m3 -mthumb -Os -g -Wall -ffreestanding -nostdlib -DAPP_START_ADDR=$(APP_START_ADDR) -I./cmsis -DSTM32L151xB
 LDFLAGS = -T stm32l151xx.ld -nostdlib -Wl,--gc-sections
 
 ELF = $(OBJECTS_DIR)/$(NAME_MODULE).elf
