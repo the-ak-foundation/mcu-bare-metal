@@ -2,9 +2,37 @@
 
 Same LED blink on PB8, but the delay is now driven by the SysTick timer instead of a busy loop. Still fully bare-metal, no HAL, no CMSIS.
 
-## Result
+Demo clip for the whole series lives in the [root README](../../README.md#demo).
 
-<!-- Add LED blink video / gif here -->
+## Diff from 00-minimal-c
+
+**Vector table** — 2 slots → 16, `SysTick_Handler` at [15]:
+```diff
+-void (*const g_pfnVectors[2])(void) = { _estack, Reset_Handler };
++void (*const g_pfnVectors[16])(void) = {
++    _estack, Reset_Handler,
++    /* [2..14] unused */ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
++    SysTick_Handler,
++};
+```
+
+**Delay** — busy-loop `nop` → SysTick tick counter:
+```diff
+-static void delay(volatile uint32_t count) { while (count--) __asm__("nop"); }
++volatile uint32_t g_tick;
++void SysTick_Handler(void) { g_tick++; }
++static void delay_ms(uint32_t ms) {
++    uint32_t start = g_tick;
++    while ((g_tick - start) < ms) { }
++}
+```
+
+**`main()`** — added SysTick setup before the blink loop:
+```diff
++SYSTICK_LOAD = (SYSCLK_HZ / TICK_HZ) - 1U;
++SYSTICK_VAL = 0U;
++SYSTICK_CTRL = (1U << 0) | (1U << 1) | (1U << 2);
+```
 
 ## How it works
 
