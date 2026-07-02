@@ -2,37 +2,32 @@
 
 Same LED blink as [`01-systick-c`](../01-systick-c/). The only change is how we reach the registers: `typedef struct` + pointer instead of one `#define` per register — the same pattern CMSIS uses.
 
-## Result
+Demo clip for the whole series lives in the [root README](../../README.md#demo).
 
-<!-- Add LED blink video / gif here -->
+## Diff from 01-systick-c
+
+**Header** — `#define` per register → one `typedef struct` per peripheral:
+```diff
+-#define GPIOB_MODER (*(volatile uint32_t*)0x40020400)
+-#define GPIOB_BSRR  (*(volatile uint32_t*)0x40020418)
++typedef struct {
++    volatile uint32_t MODER;   // 0x00
++    volatile uint32_t OTYPER;  // 0x04
++    // ...
++    volatile uint32_t BSRR;    // 0x18
++} GPIO_TypeDef;
++#define GPIOB ((GPIO_TypeDef*)0x40020400UL)
+```
+
+**Access** — flat name → arrow through the struct:
+```diff
+-GPIOB_BSRR = (1U << 8);
++GPIOB->BSRR = (1U << 8);
+```
+
+Binary size: 240 B → 228 B (−12 B — compiler folds struct offsets better than the address-cast pattern).
 
 ## How it works
-
-The whole diff lives in `led_blink.h` and the register access syntax in `led_blink.c`.
-
-**Before (`01-systick-c/led_blink.h`):**
-```c
-#define GPIOB_MODER (*(volatile uint32_t*)0x40020400)
-#define GPIOB_BSRR  (*(volatile uint32_t*)0x40020418)
-```
-
-**Now (`02-struct-c/led_blink.h`):**
-```c
-typedef struct {
-    volatile uint32_t MODER;   /* 0x00 */
-    volatile uint32_t OTYPER;  /* 0x04 */
-    /* ... */
-    volatile uint32_t BSRR;    /* 0x18 */
-} GPIO_TypeDef;
-
-#define GPIOB ((GPIO_TypeDef*)0x40020400UL)
-```
-
-Access:
-```c
-GPIOB_BSRR = (1U << 8);   // old
-GPIOB->BSRR = (1U << 8);  // new
-```
 
 The compiler computes each field offset from the struct. As long as the field order and types match the datasheet layout, `GPIOB->BSRR` compiles to `*(uint32_t*)(0x40020400 + 0x18)` — the exact same address as the `#define` version.
 
