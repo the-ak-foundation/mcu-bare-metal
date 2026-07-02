@@ -25,8 +25,6 @@ Demo clip for the whole series lives in the [root README](../../README.md#demo).
 +GPIOB->BSRR = (1U << 8);
 ```
 
-Binary size: 240 B → 228 B (−12 B — compiler folds struct offsets better than the address-cast pattern).
-
 ## How it works
 
 The compiler computes each field offset from the struct. As long as the field order and types match the datasheet layout, `GPIOB->BSRR` compiles to `*(uint32_t*)(0x40020400 + 0x18)` — the exact same address as the `#define` version.
