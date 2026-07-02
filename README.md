@@ -83,7 +83,6 @@ make debug    # openocd + arm-none-eabi-gdb
 
 **Related bare-metal STM32 repos:**
 - [STM32World/stm32fun](https://github.com/STM32World/stm32fun) — bare-metal STM32 coding style
-- [the-ak-foundation/akos](https://github.com/the-ak-foundation/akos) — bare-metal OS reference (Makefile / repo layout)
 
 ## Contact & Support
 
