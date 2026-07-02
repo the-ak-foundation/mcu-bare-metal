@@ -3,10 +3,14 @@
 
 #include <stdint.h>
 
-// STM32 peripherals
-#define RCC_AHBENR (*(volatile uint32_t*)0x4002381C)
+// STM32 peripherals — each address = peripheral BASE + register OFFSET (RM0038 §2.3)
+//
+// RCC base   = 0x40023800   → AHBENR at offset 0x1C → 0x4002381C
+// GPIOB base = 0x40020400   → MODER  at offset 0x00 → 0x40020400
+//                             BSRR   at offset 0x18 → 0x40020418
+#define RCC_AHBENR  (*(volatile uint32_t*)0x4002381C)
 #define GPIOB_MODER (*(volatile uint32_t*)0x40020400)
-#define GPIOB_BSRR (*(volatile uint32_t*)0x40020418)
+#define GPIOB_BSRR  (*(volatile uint32_t*)0x40020418)
 
 // LED pin configuration
 #define LED_PIN 8
