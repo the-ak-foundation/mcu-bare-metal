@@ -18,7 +18,7 @@ Every example blinks the same LED. Each one changes exactly one technique, so th
 
 </div>
 
-The visible result is the same across every example — this single clip shows what "it works" looks like for the whole series. Each example's own README focuses on the code change, not the video.
+The result is the same across every example — this single clip shows what "it works" looks like for the whole series. Each example's own README focuses on the code change, not the video.
 
 ## Architecture
 
