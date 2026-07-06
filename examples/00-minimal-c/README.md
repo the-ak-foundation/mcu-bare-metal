@@ -14,8 +14,8 @@ Demo clip for the whole series lives in the [root README](../../README.md#demo).
 Build / flash / debug:
 ```bash
 make          # produce .elf and .bin
-make flash    # program via ST-Link
-make debug    # openocd + arm-none-eabi-gdb
+make flash    # flash by using ST-Link V2
+make debug    # openocd + arm-none-eabi-gdb for debugging
 ```
 
 ## Meaning
