@@ -49,14 +49,6 @@ __attribute__((section(".isr_vector"))) void (*const g_pfnVectors[16])(void) = {
     SysTick_Handler,
 };
 
-static void delay_ms(uint32_t ms)
-{
-	uint32_t start = g_tick;
-	while ((g_tick - start) < ms)
-	{
-	}
-}
-
 int main(void)
 {
 	RCC_AHBENR |= (1U << 1);
@@ -66,12 +58,15 @@ int main(void)
 	SYSTICK_VAL = 0U;
 	SYSTICK_CTRL = (1U << 0) | (1U << 1) | (1U << 2);
 
+	uint32_t last_tick = g_tick;
+
 	for (;;)
 	{
-		GPIOB_BSRR = (1U << LED_PIN);
-		delay_ms(100);
-		GPIOB_BSRR = (1U << (LED_PIN + 16));
-		delay_ms(100);
+		if (g_tick - last_tick >= 100)
+		{
+			last_tick = g_tick;
+			GPIOB_ODR ^= (1U << LED_PIN);
+		}
 	}
 	return 0;
 }
