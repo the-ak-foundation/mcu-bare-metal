@@ -5,3 +5,4 @@ Blink an LED on PB8 of the AK Embedded Base Kit (STM32L151CBT6). Everything is w
 Demo clip for the whole series lives in the [root README](../../README.md#demo).
 
 ## How it works
+
