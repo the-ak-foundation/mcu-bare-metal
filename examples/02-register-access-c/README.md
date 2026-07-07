@@ -1,4 +1,4 @@
-# 01-systick-c — SysTick timing (two header styles)
+# 02-register-access-c — Ways to declare registers in header
 
 Same LED blink on PB8 with SysTick timing. Two variants live side by side, differing only in how peripheral registers are declared in the header:
 
@@ -12,7 +12,7 @@ Demo clip for the whole series lives in the [root README](../../README.md#demo).
 ## Layout
 
 ```
-01-systick-c/
+01-register-access-c/
 ├── macro/
 │   ├── led_blink.c
 │   ├── led_blink.h
