@@ -21,7 +21,7 @@ all: $(BIN)
 $(OBJECTS_DIR):
 	mkdir -p $(OBJECTS_DIR)
 
-$(ELF): $(NAME_MODULE).c | $(OBJECTS_DIR)
+$(ELF): $(NAME_MODULE).c $(NAME_MODULE).h | $(OBJECTS_DIR)
 	$(GCC_PATH)/bin/arm-none-eabi-gcc $(CFLAGS) $(LDFLAGS) $< -o $@
 
 $(BIN): $(ELF)
