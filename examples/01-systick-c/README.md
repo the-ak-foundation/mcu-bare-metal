@@ -1,6 +1,6 @@
 # 01-systick-c - SysTick LED blink
 
-Blink LED PB8 on STM32L151CBT6 using SysTick. This example keeps the same startup code, linker script, vector table, and raw register access from `00-minimal-c`. The busy-loop delay is replaced by a 1 ms SysTick interrupt.
+Blink LED PB8 on STM32L151CBT6 using SysTick. This example keeps the same startup code, linker script, and raw register access from `00-minimal-c`. The vector table grows from 2 entries to 16 to hold the SysTick slot, and the busy-loop delay is replaced by a 1 ms SysTick interrupt.
 
 No HAL. No CMSIS. No ST startup files.
 
