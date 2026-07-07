@@ -1,71 +1,126 @@
-# 02-cmsis-c — Use CMSIS headers from ST
+# 03-cmsis-c - CMSIS device headers
 
-Same LED blink as [`01-systick-c/struct/`](../01-systick-c/struct/). This time we drop every hand-written peripheral struct and base pointer and just `#include "stm32l1xx.h"` — the CMSIS-Core (ARM) + CMSIS-Device (ST) headers give us everything.
+Blink LED PB8 with SysTick timing.
+
+This example keeps the same behavior as [`02-register-access-c/struct`](../02-register-access-c/struct/). The hand-written peripheral structs are replaced by CMSIS headers from ARM and ST.
+
+No HAL. No ST startup files.
 
 Demo clip for the whole series lives in the [root README](../../README.md#demo).
 
-## Diff from 01-systick-c/struct
+## Diff From 02-Register-Access-C/Struct
 
-**Header** — 3 hand-written structs + 3 base pointers → 1 include:
+The hand-written register structs and base pointers are replaced by one include:
+
 ```diff
--typedef struct { volatile uint32_t MODER; ...; volatile uint32_t ODR; } GPIO_TypeDef;
--typedef struct { volatile uint32_t CR; ...; volatile uint32_t AHBENR; } RCC_TypeDef;
--typedef struct { volatile uint32_t CTRL; ...; volatile uint32_t CALIB; } SysTick_TypeDef;
+-typedef struct
+-{
+-    volatile uint32_t MODER;
+-    volatile uint32_t OTYPER;
+-    volatile uint32_t OSPEEDR;
+-    volatile uint32_t PUPDR;
+-    volatile uint32_t IDR;
+-    volatile uint32_t ODR;
+-} GPIO_TypeDef;
+-
+-typedef struct
+-{
+-    volatile uint32_t CR;
+-    volatile uint32_t ICSCR;
+-    volatile uint32_t CFGR;
+-    volatile uint32_t CIR;
+-    volatile uint32_t AHBRSTR;
+-    volatile uint32_t APB2RSTR;
+-    volatile uint32_t APB1RSTR;
+-    volatile uint32_t AHBENR;
+-} RCC_TypeDef;
+-
+-typedef struct
+-{
+-    volatile uint32_t SYST_CSR;
+-    volatile uint32_t SYST_RVR;
+-    volatile uint32_t SYST_CVR;
+-    volatile uint32_t SYST_CALIB;
+-} SysTick_TypeDef;
+-
 -#define GPIOB   ((GPIO_TypeDef*)0x40020400UL)
 -#define RCC     ((RCC_TypeDef*)0x40023800UL)
 -#define SysTick ((SysTick_TypeDef*)0xE000E010UL)
 +#include "stm32l1xx.h"
 ```
 
-**GPIOB clock enable** — raw bit → named constant from ST:
+The GPIOB clock bit uses a CMSIS device macro:
+
 ```diff
 -RCC->AHBENR |= (1U << 1);
 +RCC->AHBENR |= RCC_AHBENR_GPIOBEN;
 ```
 
-**SysTick setup** — 3 lines manual → 1 CMSIS-Core call:
+SysTick setup uses a CMSIS-Core helper:
+
 ```diff
--SysTick->LOAD = (SYSCLK_HZ / TICK_HZ) - 1U;
--SysTick->VAL = 0U;
--SysTick->CTRL = (1U << 0) | (1U << 1) | (1U << 2);
+-SysTick->SYST_RVR = (SYSCLK_HZ / TICK_HZ) - 1U;
+-SysTick->SYST_CVR = 0U;
+-SysTick->SYST_CSR = (1U << 0) | (1U << 1) | (1U << 2);
 +SysTick_Config(SYSCLK_HZ / TICK_HZ);
 ```
 
-**Makefile** — 2 new flags:
+The Makefile adds the CMSIS include path and target chip macro:
+
 ```diff
 -CFLAGS = -mcpu=cortex-m3 -mthumb ... -DAPP_START_ADDR=$(APP_START_ADDR)
 +CFLAGS = -mcpu=cortex-m3 -mthumb ... -DAPP_START_ADDR=$(APP_START_ADDR) -I./cmsis -DSTM32L151xB
 ```
 
-`-I./cmsis` tells the compiler where the vendored headers live; `-DSTM32L151xB` tells `stm32l1xx.h` which chip we're building for.
+`-I./cmsis` tells the compiler where the vendored headers are.
 
-## How it works
+`-DSTM32L151xB` tells `stm32l1xx.h` which STM32L1 device header to include.
 
-The vendored files under `cmsis/`:
+## CMSIS Files
 
-| File | Source | What it provides |
-|------|--------|------------------|
-| `core_cm3.h`, `cmsis_gcc.h`, `cmsis_compiler.h`, `cmsis_version.h`, `mpu_armv7.h` | ARM (CMSIS-Core) | `SysTick`, `SysTick_Config()`, `NVIC_*`, compiler intrinsics |
-| `stm32l1xx.h`, `stm32l151xb.h`, `system_stm32l1xx.h` | ST (CMSIS-Device) | `GPIOB`, `RCC`, all peripheral structs, `RCC_AHBENR_GPIOBEN` and every other bit-field constant |
+The CMSIS files are vendored in [`cmsis/`](./cmsis/).
 
-`stm32l1xx.h` reads the `STM32L151xB` macro from the Makefile and pulls in the right device header, which in turn pulls in `core_cm3.h`. One include line reaches every symbol we need.
+| File | Source | Provides |
+|------|--------|----------|
+| `core_cm3.h` | ARM CMSIS-Core | Cortex-M3 core registers, `SysTick`, `SysTick_Config()`, `NVIC_*` |
+| `cmsis_gcc.h` | ARM CMSIS-Core | GCC compiler intrinsics |
+| `cmsis_compiler.h` | ARM CMSIS-Core | compiler abstraction macros |
+| `cmsis_version.h` | ARM CMSIS-Core | CMSIS version macros |
+| `mpu_armv7.h` | ARM CMSIS-Core | ARMv7-M MPU definitions |
+| `stm32l1xx.h` | ST CMSIS-Device | device selection entry point |
+| `stm32l151xb.h` | ST CMSIS-Device | STM32L151xB registers, structs, base addresses, bit masks |
+| `system_stm32l1xx.h` | ST CMSIS-Device | system clock declarations |
 
-Build / flash / debug:
+## How It Works
+
+`stm32l1xx.h` reads the `STM32L151xB` macro from the Makefile.
+
+That selects `stm32l151xb.h`.
+
+`stm32l151xb.h` defines the same kind of register structs used in `02-register-access-c/struct`, but for the full chip.
+
+Examples:
+
+```c
+GPIOB->MODER
+RCC->AHBENR
+RCC_AHBENR_GPIOBEN
+```
+
+`core_cm3.h` provides Cortex-M3 core definitions such as `SysTick` and `SysTick_Config()`.
+
+## Build / Flash / Debug
+
 ```bash
-make && make flash
+make
+make flash
 make debug
 ```
 
 ## Meaning
 
-This is where the hand-written work pays off. Everything we crafted in `01-systick-c/struct/` (structs, base pointers, offset comments) is already sitting inside `stm32l1xx.h` in the same pattern — the ST engineers wrote it once so we don't have to. Two takeaways:
+CMSIS replaces the hand-written register declarations.
 
-- **CMSIS is not magic.** Open `cmsis/stm32l151xb.h` and you see the same `typedef struct { volatile uint32_t MODER; ... }` we wrote by hand, plus every other register we skipped. Nothing is hidden.
-- **Named constants beat raw bits.** `RCC_AHBENR_GPIOBEN` is easier to read than `(1U << 1)` and stays correct if the register layout ever changes.
+The code still writes registers directly. There is no HAL layer here.
 
-## Where the CMSIS headers come from
-
-All 8 files in [`cmsis/`](./cmsis/) are Apache-2.0 vendored copies.
-
-- **ARM CMSIS-Core** — [ARM-software/CMSIS_5](https://github.com/ARM-software/CMSIS_5) — Cortex-M3 core helpers (`SysTick`, `NVIC_*`, compiler intrinsics).
-- **ST CMSIS-Device L1** — [STMicroelectronics/cmsis_device_l1](https://github.com/STMicroelectronics/cmsis_device_l1) — STM32L1 peripheral register definitions and bit-field constants.
+The difference is that register structs, base addresses, and bit masks now come from the vendor headers instead of `led_blink.h`.
