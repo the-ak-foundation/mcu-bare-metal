@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-// GPIO register block — layout from RM0038 8.4 (each field = one 32-bit register)
+// GPIO register block (layout from RM0038 8.4)
 // Base + field offset gives the address; the compiler does the arithmetic.
 //
 // GPIOB base = 0x40020400
@@ -19,7 +19,7 @@ typedef struct
 	volatile uint32_t ODR;     // 0x14: output data
 } GPIO_TypeDef;
 
-// RCC register block — layout from RM0038 6.3, truncated at AHBENR (last field we use)
+// RCC register block (layout from RM0038 6.3)
 //
 // RCC base = 0x40023800 → AHBENR at offset 0x1C
 typedef struct
@@ -34,7 +34,7 @@ typedef struct
 	volatile uint32_t AHBENR;   // 0x1C: AHB peripheral clock enable
 } RCC_TypeDef;
 
-// Cortex-M3 SysTick — ARMv7-M ARM DDI0403E.e, B3.3.2, Table B3-7
+// Cortex-M3 SysTick registers (ARMv7-M B3.3.2)
 typedef struct
 {
 	volatile uint32_t SYST_CSR;   // 0x00: Control and Status Register
