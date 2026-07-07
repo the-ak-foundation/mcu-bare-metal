@@ -91,6 +91,4 @@ make debug
 
 ## Meaning
 
-HAL replaces direct register access with function calls.
-
-The register writes still happen inside the HAL functions. HAL adds about 2 KB of code compared to `03-cmsis-c`.
+HAL replaces direct register access with function calls. The register writes still happen inside the HAL functions.
