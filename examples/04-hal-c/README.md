@@ -59,7 +59,7 @@ The Makefile adds the HAL include path and the HAL enable macro:
 
 ## HAL Files
 
-The HAL sources are vendored in [`hal/`](./hal/). Five `.c` files are compiled:
+The HAL sources are vendored in [`hal/`](./hal/), copied from ST's [`stm32l1xx_hal_driver`](https://github.com/STMicroelectronics/stm32l1xx_hal_driver) and [`cmsis_device_l1`](https://github.com/STMicroelectronics/cmsis_device_l1) repositories. Five `.c` files are compiled:
 
 | File | Provides |
 |------|----------|
