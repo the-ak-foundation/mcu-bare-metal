@@ -54,7 +54,8 @@ The result is the same across every example — this single clip shows what "it 
 |---|--------|-----------|
 | 00 | [`00-minimal-c`](examples/00-minimal-c/) | Vector table, `Reset_Handler`, linker script, `#define` register access, busy-loop delay |
 | 01 | [`01-systick-c`](examples/01-systick-c/) | SysTick millisecond timing; two header styles: `macro/` (`#define`) and `struct/` (`typedef struct`) |
-| 02 | [`02-cmsis-c`](examples/02-cmsis-c/) | Drop hand-written structs — `#include "stm32l1xx.h"` (CMSIS-Core + CMSIS-Device from ST) |
+| 02 | [`02-register-access-c`](examples/02-register-access-c/) | Drop hand-written structs — `#include "stm32l1xx.h"` (CMSIS-Core + CMSIS-Device from ST) |
+| 03 | [`03-cmsis-c`](examples/03-cmsis-c/) | Drop hand-written structs — `#include "stm32l1xx.h"` (CMSIS-Core + CMSIS-Device from ST) |
 
 ## Quick start
 
