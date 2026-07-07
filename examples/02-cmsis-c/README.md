@@ -1,14 +1,14 @@
-# 03-cmsis-c — Use CMSIS headers from ST
+# 02-cmsis-c — Use CMSIS headers from ST
 
-Same LED blink as [`02-struct-c`](../02-struct-c/). This time we drop every hand-written peripheral struct and base pointer and just `#include "stm32l1xx.h"` — the CMSIS-Core (ARM) + CMSIS-Device (ST) headers give us everything.
+Same LED blink as [`01-systick-c/struct/`](../01-systick-c/struct/). This time we drop every hand-written peripheral struct and base pointer and just `#include "stm32l1xx.h"` — the CMSIS-Core (ARM) + CMSIS-Device (ST) headers give us everything.
 
 Demo clip for the whole series lives in the [root README](../../README.md#demo).
 
-## Diff from 02-struct-c
+## Diff from 01-systick-c/struct
 
 **Header** — 3 hand-written structs + 3 base pointers → 1 include:
 ```diff
--typedef struct { volatile uint32_t MODER; ...; volatile uint32_t BSRR; } GPIO_TypeDef;
+-typedef struct { volatile uint32_t MODER; ...; volatile uint32_t ODR; } GPIO_TypeDef;
 -typedef struct { volatile uint32_t CR; ...; volatile uint32_t AHBENR; } RCC_TypeDef;
 -typedef struct { volatile uint32_t CTRL; ...; volatile uint32_t CALIB; } SysTick_TypeDef;
 -#define GPIOB   ((GPIO_TypeDef*)0x40020400UL)
@@ -58,7 +58,7 @@ make debug
 
 ## Meaning
 
-This is where the hand-written work pays off. Everything we crafted in `02-struct-c` (structs, base pointers, offset comments) is already sitting inside `stm32l1xx.h` in the same pattern — the ST engineers wrote it once so we don't have to. Two takeaways:
+This is where the hand-written work pays off. Everything we crafted in `01-systick-c/struct/` (structs, base pointers, offset comments) is already sitting inside `stm32l1xx.h` in the same pattern — the ST engineers wrote it once so we don't have to. Two takeaways:
 
 - **CMSIS is not magic.** Open `cmsis/stm32l151xb.h` and you see the same `typedef struct { volatile uint32_t MODER; ... }` we wrote by hand, plus every other register we skipped. Nothing is hidden.
 - **Named constants beat raw bits.** `RCC_AHBENR_GPIOBEN` is easier to read than `(1U << 1)` and stays correct if the register layout ever changes.
