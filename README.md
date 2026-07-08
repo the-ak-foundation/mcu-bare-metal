@@ -48,14 +48,29 @@ The result is the same across every example — this single clip shows what "it 
 |-------|-----|--------|
 | [AK Embedded Base Kit](https://epcb.vn/products/ak-embedded-base-kit-lap-trinh-nhung-vi-dieu-khien-mcu) | STM32L151CBT6 (ARM Cortex-M3) | Primary target |
 
-## Examples
+## Topics
 
-| # | Folder | What's new |
-|---|--------|-----------|
-| 00 | [`00-minimal-c`](examples/00-minimal-c/) | startup, linker, vector table, raw blink, busy-loop |
-| 01 | [`01-systick-c`](examples/01-systick-c/) | add SysTick interrupt and millisecond tick |
-| 02 | [`02-register-access-c`](examples/02-register-access-c/) | compare macro vs struct register access |
-| 03 | [`03-cmsis-c`](examples/03-cmsis-c/) | replace hand-written register declarations with CMSIS |
+### [`compiler/`](compiler/)
+
+| Folder | Concept |
+|--------|---------|
+| [`01-c-startup/`](compiler/01-c-startup/) | Linker script and C `Reset_Handler` |
+
+### [`arm-cortex-m/`](arm-cortex-m/)
+
+| Folder | Concept |
+|--------|---------|
+| [`01-systick/`](arm-cortex-m/01-systick/) | 1 ms SysTick tick and interrupt |
+
+### [`hal-pattern/`](hal-pattern/)
+
+| Folder | Concept |
+|--------|---------|
+| [`01-register-macro/`](hal-pattern/01-register-macro/) | Macro-based register access |
+| [`02-register-struct/`](hal-pattern/02-register-struct/) | Struct-based register access |
+| [`03-cmsis-device/`](hal-pattern/03-cmsis-device/) | CMSIS-Device vendor headers |
+| [`04-hal-blocking/`](hal-pattern/04-hal-blocking/) | HAL with blocking `HAL_Delay` |
+| [`05-hal-nonblocking/`](hal-pattern/05-hal-nonblocking/) | HAL with non-blocking `HAL_GetTick` |
 
 ## Quick start
 
