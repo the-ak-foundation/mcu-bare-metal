@@ -81,7 +81,7 @@ To build the source and flash firmware onto the kit, you need a Linux developmen
 Once the toolchain is ready, each example builds the same way:
 
 ```bash
-cd examples/00-minimal-c
+cd compiler/01-c-startup
 make          # build .elf and .bin
 make flash    # program via ST-Link
 make debug    # openocd + arm-none-eabi-gdb
@@ -90,9 +90,9 @@ make debug    # openocd + arm-none-eabi-gdb
 ## References
 
 **Datasheets & manuals** in [`resources/datasheet/`](resources/datasheet/):
-- [**RM0038**](resources/datasheet/rm0038-stm32l100xx-stm32l151xx-stm32l152xx-and-stm32l162xx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf) — STM32L1 reference manual. Peripheral register maps (GPIO, RCC, ...). Cited in `00-minimal-c` through `02-register-access-c`.
+- [**RM0038**](resources/datasheet/rm0038-stm32l100xx-stm32l151xx-stm32l152xx-and-stm32l162xx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf) — STM32L1 reference manual. Peripheral register maps (GPIO, RCC, ...). Cited in the C-startup and register-access examples.
 - [**STM32L151CBT6 datasheet**](resources/datasheet/STM32L151CBT6.PDF) — pinout, package, electrical characteristics.
-- [**DDI 0403**](resources/datasheet/DDI0403E_e_armv7m_arm.pdf) — ARMv7-M Architecture Reference Manual. Vector table, SysTick, NVIC, Thumb ISA. Cited in `01-systick-c` and `02-register-access-c`.
+- [**DDI 0403**](resources/datasheet/DDI0403E_e_armv7m_arm.pdf) — ARMv7-M Architecture Reference Manual. Vector table, SysTick, NVIC, Thumb ISA. Cited in the SysTick and register-access examples.
 
 **Related bare-metal STM32 repos:**
 - [STM32World/stm32fun](https://github.com/STM32World/stm32fun) — bare-metal STM32 coding style
