@@ -6,9 +6,9 @@
 
 # Embedded MCU Bare Metal
 
-A collection of bare-metal examples for microcontrollers, written with hand-crafted startup code, vector tables, and linker scripts. No HAL, no vendor SDKs, no auto-generated code.
+Bare-metal microcontroller examples in three topics: compiler and linker, ARM Cortex-M core, and driver patterns (raw registers, CMSIS, HAL).
 
-Every example blinks the same LED. Each one changes exactly one technique, so the diff between adjacent folders shows the concept being introduced — from raw register writes all the way up to HAL.
+Every example blinks the same LED. Each one changes exactly one technique, so the diff between two examples in the same topic shows the new concept.
 
 ## Demo
 
@@ -18,7 +18,7 @@ Every example blinks the same LED. Each one changes exactly one technique, so th
 
 </div>
 
-The result is the same across every example — this single clip shows what "it works" looks like for the whole series. Each example's own README focuses on the code change, not the video.
+The result is the same across every example — this single clip shows what "it works" looks like for every example. Each example's own README focuses on the code change, not the video.
 
 ## Architecture
 
