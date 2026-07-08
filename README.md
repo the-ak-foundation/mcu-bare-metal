@@ -54,7 +54,7 @@ The result is the same across every example — this single clip shows what "it 
 
 | Folder | Concept |
 |--------|---------|
-| [`01-c-startup/`](compiler/01-c-startup/) | Linker script and C `Reset_Handler` |
+| [`01-startup-c/`](compiler/01-startup-c/) | Linker script and C `Reset_Handler` |
 
 ### [`arm-cortex-m/`](arm-cortex-m/)
 
@@ -81,7 +81,7 @@ To build the source and flash firmware onto the kit, you need a Linux developmen
 Once the toolchain is ready, each example builds the same way:
 
 ```bash
-cd compiler/01-c-startup
+cd compiler/01-startup-c
 make          # build .elf and .bin
 make flash    # program via ST-Link
 make debug    # openocd + arm-none-eabi-gdb
