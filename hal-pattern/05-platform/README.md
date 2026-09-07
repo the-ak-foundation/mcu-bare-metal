@@ -1,6 +1,6 @@
 # 05-platform - The HAL project
 
-This is the HAL. Folders 00 to 04 walked through the driver-access techniques on the same LED blink. Here we stop iterating on one file and start building the real thing: a layered HAL project with an API per peripheral, one instance driver per MCU peripheral, a BSP layer, and per-project config. LED blink is its first working module. Every new peripheral (UART, ADC, and so on) will come as a new example under `examples/`.
+This is the HAL. Folders 00 to 04 walked through the driver-access techniques on the same LED blink. Here we stop iterating on one file and start building the real thing: a layered HAL project with an API per peripheral, one instance driver per MCU peripheral, a BSP layer, and per-project config. GPIO, UART, and Timer are the three working modules under `examples/`.
 
 The application code (`hal_entry.c`) does not depend on the MCU. Porting to a new chip is done by adding a new instance driver and binding it in `hal_data.c`; the application stays the same.
 
