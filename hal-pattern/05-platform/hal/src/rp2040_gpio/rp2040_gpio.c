@@ -111,20 +111,49 @@ hal_err_t RP2040_GPIO_PinRead(hal_gpio_ctrl_t * const p_ctrl,
                               bsp_io_port_pin_t       pin,
                               bsp_io_level_t        * p_pin_value)
 {
+#if (1 == RP2040_GPIO_CFG_PARAM_CHECKING_ENABLE)
+    rp2040_gpio_instance_ctrl_t * p_instance_ctrl = (rp2040_gpio_instance_ctrl_t *) p_ctrl;
+    HAL_ASSERT(NULL != p_instance_ctrl);
+    HAL_ERROR_RETURN(RP2040_GPIO_OPEN == p_instance_ctrl->open, HAL_ERR_NOT_OPEN);
+    HAL_ASSERT(NULL != p_pin_value);
+    HAL_ERROR_RETURN((uint32_t) pin < RP2040_GPIO_PRV_PIN_MAX, HAL_ERR_INVALID_ARGUMENT);
+#else
     HAL_PARAMETER_NOT_USED(p_ctrl);
-    HAL_PARAMETER_NOT_USED(pin);
-    HAL_PARAMETER_NOT_USED(p_pin_value);
-    return HAL_ERR_UNSUPPORTED;
+#endif
+
+    uint32_t input = RP2040_REG(SIO_BASE + SIO_GPIO_IN_OFFSET);
+
+    *p_pin_value = (bsp_io_level_t) ((input >> (uint32_t) pin) & 1U);
+
+    return HAL_SUCCESS;
 }
 
 hal_err_t RP2040_GPIO_PinWrite(hal_gpio_ctrl_t * const p_ctrl,
                                bsp_io_port_pin_t       pin,
                                bsp_io_level_t          level)
 {
+#if (1 == RP2040_GPIO_CFG_PARAM_CHECKING_ENABLE)
+    rp2040_gpio_instance_ctrl_t * p_instance_ctrl = (rp2040_gpio_instance_ctrl_t *) p_ctrl;
+    HAL_ASSERT(NULL != p_instance_ctrl);
+    HAL_ERROR_RETURN(RP2040_GPIO_OPEN == p_instance_ctrl->open, HAL_ERR_NOT_OPEN);
+    HAL_ERROR_RETURN(level <= BSP_IO_LEVEL_HIGH, HAL_ERR_INVALID_ARGUMENT);
+    HAL_ERROR_RETURN((uint32_t) pin < RP2040_GPIO_PRV_PIN_MAX, HAL_ERR_INVALID_ARGUMENT);
+#else
     HAL_PARAMETER_NOT_USED(p_ctrl);
-    HAL_PARAMETER_NOT_USED(pin);
-    HAL_PARAMETER_NOT_USED(level);
-    return HAL_ERR_UNSUPPORTED;
+#endif
+
+    uint32_t mask = 1U << (uint32_t) pin;
+
+    if (BSP_IO_LEVEL_LOW == level)
+    {
+        RP2040_REG(SIO_BASE + SIO_GPIO_OUT_CLR_OFFSET) = mask;
+    }
+    else
+    {
+        RP2040_REG(SIO_BASE + SIO_GPIO_OUT_SET_OFFSET) = mask;
+    }
+
+    return HAL_SUCCESS;
 }
 
 hal_err_t RP2040_GPIO_PortDirectionSet(hal_gpio_ctrl_t * const p_ctrl,
@@ -132,21 +161,49 @@ hal_err_t RP2040_GPIO_PortDirectionSet(hal_gpio_ctrl_t * const p_ctrl,
                                        hal_gpio_size_t         direction_values,
                                        hal_gpio_size_t         mask)
 {
+#if (1 == RP2040_GPIO_CFG_PARAM_CHECKING_ENABLE)
+    rp2040_gpio_instance_ctrl_t * p_instance_ctrl = (rp2040_gpio_instance_ctrl_t *) p_ctrl;
+    HAL_ASSERT(NULL != p_instance_ctrl);
+    HAL_ERROR_RETURN(RP2040_GPIO_OPEN == p_instance_ctrl->open, HAL_ERR_NOT_OPEN);
+#else
     HAL_PARAMETER_NOT_USED(p_ctrl);
-    HAL_PARAMETER_NOT_USED(port);
-    HAL_PARAMETER_NOT_USED(direction_values);
-    HAL_PARAMETER_NOT_USED(mask);
-    return HAL_ERR_UNSUPPORTED;
+#endif
+
+    uint32_t shift    = (uint32_t) port * 16U;
+    uint32_t setbits  = ((uint32_t)  direction_values & (uint32_t) mask) << shift;
+    uint32_t clrbits  = ((uint32_t) ~direction_values & (uint32_t) mask) << shift;
+
+    if (0U != setbits)
+    {
+        RP2040_REG(SIO_BASE + SIO_GPIO_OE_SET_OFFSET) = setbits;
+    }
+    if (0U != clrbits)
+    {
+        RP2040_REG(SIO_BASE + SIO_GPIO_OE_CLR_OFFSET) = clrbits;
+    }
+
+    return HAL_SUCCESS;
 }
 
 hal_err_t RP2040_GPIO_PortRead(hal_gpio_ctrl_t * const p_ctrl,
                                bsp_io_port_t           port,
                                hal_gpio_size_t       * p_port_value)
 {
+#if (1 == RP2040_GPIO_CFG_PARAM_CHECKING_ENABLE)
+    rp2040_gpio_instance_ctrl_t * p_instance_ctrl = (rp2040_gpio_instance_ctrl_t *) p_ctrl;
+    HAL_ASSERT(NULL != p_instance_ctrl);
+    HAL_ERROR_RETURN(RP2040_GPIO_OPEN == p_instance_ctrl->open, HAL_ERR_NOT_OPEN);
+    HAL_ASSERT(NULL != p_port_value);
+#else
     HAL_PARAMETER_NOT_USED(p_ctrl);
-    HAL_PARAMETER_NOT_USED(port);
-    HAL_PARAMETER_NOT_USED(p_port_value);
-    return HAL_ERR_UNSUPPORTED;
+#endif
+
+    uint32_t input = RP2040_REG(SIO_BASE + SIO_GPIO_IN_OFFSET);
+    uint32_t shift = (uint32_t) port * 16U;
+
+    *p_port_value = (hal_gpio_size_t) ((input >> shift) & 0xFFFFU);
+
+    return HAL_SUCCESS;
 }
 
 hal_err_t RP2040_GPIO_PortWrite(hal_gpio_ctrl_t * const p_ctrl,
@@ -154,11 +211,28 @@ hal_err_t RP2040_GPIO_PortWrite(hal_gpio_ctrl_t * const p_ctrl,
                                 hal_gpio_size_t         value,
                                 hal_gpio_size_t         mask)
 {
+#if (1 == RP2040_GPIO_CFG_PARAM_CHECKING_ENABLE)
+    rp2040_gpio_instance_ctrl_t * p_instance_ctrl = (rp2040_gpio_instance_ctrl_t *) p_ctrl;
+    HAL_ASSERT(NULL != p_instance_ctrl);
+    HAL_ERROR_RETURN(RP2040_GPIO_OPEN == p_instance_ctrl->open, HAL_ERR_NOT_OPEN);
+#else
     HAL_PARAMETER_NOT_USED(p_ctrl);
-    HAL_PARAMETER_NOT_USED(port);
-    HAL_PARAMETER_NOT_USED(value);
-    HAL_PARAMETER_NOT_USED(mask);
-    return HAL_ERR_UNSUPPORTED;
+#endif
+
+    uint32_t shift   = (uint32_t) port * 16U;
+    uint32_t setbits = ((uint32_t)  value & (uint32_t) mask) << shift;
+    uint32_t clrbits = ((uint32_t) ~value & (uint32_t) mask) << shift;
+
+    if (0U != setbits)
+    {
+        RP2040_REG(SIO_BASE + SIO_GPIO_OUT_SET_OFFSET) = setbits;
+    }
+    if (0U != clrbits)
+    {
+        RP2040_REG(SIO_BASE + SIO_GPIO_OUT_CLR_OFFSET) = clrbits;
+    }
+
+    return HAL_SUCCESS;
 }
 
 static void rp2040_gpio_pins_config(hal_gpio_cfg_t const * p_cfg)
