@@ -5,9 +5,15 @@ OBJECTS_DIR  = build_$(NAME_MODULE)
 MCU ?= stm32l1
 
 ifeq ($(MCU),stm32l1)
-MCU_FLAGS = -mcpu=cortex-m3 -mthumb
+MCU_FLAGS    = -mcpu=cortex-m3 -mthumb
+MCU_CPPFLAGS = -DSTM32L151xB \
+               -Icmsis -Iboard/ak_base_kit \
+               -Ihal/src/bsp/mcu/stm32l1
 else ifeq ($(MCU),rp2040)
-MCU_FLAGS = -mcpu=cortex-m0plus -mthumb
+MCU_FLAGS    = -mcpu=cortex-m0plus -mthumb
+MCU_CPPFLAGS = -DRP2040 \
+               -Icmsis/rp2040 -Iboard/raspberry_pi_pico \
+               -Ihal/src/bsp/mcu/rp2040
 else
 $(error unknown MCU: $(MCU))
 endif
@@ -25,10 +31,8 @@ SIZE    = $(CROSS)size
 
 CFLAGS  = $(MCU_FLAGS) -std=c99 -Os -g -Wall -Wextra \
           -ffunction-sections -fdata-sections -fsigned-char -fmessage-length=0 \
-          -DSTM32L151xB -MMD -MP \
-          -Icmsis -Iboard/ak_base_kit \
-          -Ihal/inc/api -Ihal/inc/instances \
-          -Ihal/src/bsp/mcu/all -Ihal/src/bsp/mcu/stm32l1 \
+          -MMD -MP $(MCU_CPPFLAGS) \
+          -Ihal/inc/api -Ihal/inc/instances -Ihal/src/bsp/mcu/all \
           -I$(PROJECT_DIR)/hal_cfg/bsp -I$(PROJECT_DIR)/hal_cfg/driver \
           -I$(PROJECT_DIR)/hal_gen
 
