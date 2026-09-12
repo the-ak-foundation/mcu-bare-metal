@@ -117,8 +117,18 @@ $(OBJECTS_DIR)/%.o: %.s | $(OBJECTS_DIR)
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -x assembler-with-cpp -c $< -o $@
 
+ifeq ($(MCU),stm32l1)
 flash: $(BIN)
 	$(PROGRAMER_PATH)/STM32_Programmer.sh -c port=SWD -w $< $(APP_START_ADDR) -rst
+else ifeq ($(MCU),rp2040)
+OPENOCD           ?= openocd
+PICO_SWD_ADAPTER  ?= interface/cmsis-dap.cfg
+PICO_SWD_SPEED_HZ ?= 5000
+flash: $(ELF)
+	$(OPENOCD) -f $(PICO_SWD_ADAPTER) -f target/rp2040.cfg \
+	           -c "adapter speed $(PICO_SWD_SPEED_HZ)" \
+	           -c "program $< verify reset exit"
+endif
 
 debug: $(ELF)
 	xterm -e openocd -f $(OPENOCD_CFG_PATH) &
