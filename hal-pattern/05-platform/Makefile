@@ -101,6 +101,14 @@ $(ELF): $(OBJ) | $(OBJECTS_DIR)
 $(BIN): $(ELF)
 	$(OBJCOPY) -O binary $< $@
 
+PICOTOOL ?= picotool
+UF2       = $(OBJECTS_DIR)/$(NAME_MODULE).uf2
+
+$(UF2): $(ELF)
+	$(PICOTOOL) uf2 convert $< $@
+
+uf2: $(UF2)
+
 $(OBJECTS_DIR)/%.o: %.c | $(OBJECTS_DIR)
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -126,4 +134,4 @@ clean:
 
 -include $(DEP)
 
-.PHONY: all clean flash debug
+.PHONY: all clean flash debug uf2
