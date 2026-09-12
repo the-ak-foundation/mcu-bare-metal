@@ -70,7 +70,7 @@ Target 2
   Clocks  : XOSC 12 MHz, PLL_SYS x125 / 6 / 2, SYSCLK 125 MHz
 ```
 
-Both targets run the same `hal_entry.c` byte-for-byte. Adding a target means adding an MCU folder, a board folder, a clock init, and an example — never touching the application source.
+Both targets run the same `hal_entry.c` byte-for-byte. Adding a target means adding an MCU folder, a board folder, a clock init, and an example. The application source stays untouched.
 
 ## Examples
 
