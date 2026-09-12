@@ -1,5 +1,5 @@
 /*
- * Minimal shim to satisfy pico-sdk hardware/regs/*.h expectation of
+ * Minimal shim to satisfy pico-sdk hardware regs headers expectation of
  * hardware/platform_defs.h. Only exposes the _u() literal-suffix macro.
  *
  * pico-sdk regs headers write constants as _u(0x1234) so the same header
