@@ -35,6 +35,6 @@ BSP_ATTRIBUTE_STACKLESS static void bsp_prv_software_delay_loop(__attribute__((u
 		"1:                         \n"
 		"    sub r0, r0, #1         \n"
 		"    cmp r0, #0             \n"
-		"    bne.n 1b               \n"
+		"    bne   1b               \n"
 		"    bx lr                  \n");
 }
