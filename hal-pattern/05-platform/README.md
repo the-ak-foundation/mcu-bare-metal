@@ -54,26 +54,34 @@ Each peripheral instance lives in its own folder under `hal/src/`, named `<mcu>_
 
 A folder is added with its first working module. No empty placeholders.
 
-## First target
+## Targets
 
 ```text
-MCU     : STM32L151CBT6
-Board   : AK Embedded Base Kit
-LED     : PB8
-Clocks  : HSE 8 MHz, PLL x12 / 3, SYSCLK 32 MHz
+Target 1
+  MCU     : STM32L151CBT6         (Cortex-M3)
+  Board   : AK Embedded Base Kit
+  LED     : PB8
+  Clocks  : HSE 8 MHz, PLL x12 / 3, SYSCLK 32 MHz
+
+Target 2
+  MCU     : RP2040                (dual Cortex-M0+, core 0 only)
+  Board   : Raspberry Pi Pico
+  LED     : GPIO25
+  Clocks  : XOSC 12 MHz, PLL_SYS x125 / 6 / 2, SYSCLK 125 MHz
 ```
 
-The first example uses GPIO and the BSP software delay to blink `PB8`. A new peripheral is added only with an example that can be built and tested.
+Both targets run the same `hal_entry.c` byte-for-byte. Adding a target means adding an MCU folder, a board folder, a clock init, and an example — never touching the application source.
 
 ## Examples
 
-Each folder under `examples/ak_base_kit/` is one working firmware. Pick which to build with `NAME_MODULE` and `PROJECT_DIR` in the next section.
+Each folder under `examples/<board>/` is one working firmware. Pick which to build with `MCU`, `NAME_MODULE`, and `PROJECT_DIR` in the next section.
 
-| Folder | Peripheral | Main loop |
-|---|---|---|
-| `gpio/led_blink` | GPIO | Toggles the LED and calls the software delay between steps. |
-| `uart/hello` | UART | Writes a line over USART1 and waits between writes. |
-| `timer/blink` | Timer | Empty. The TIM2 overflow interrupt toggles the LED through a callback. |
+| Board | Folder | Peripheral | Main loop |
+|---|---|---|---|
+| AK Base Kit | `gpio/led_blink` | GPIO | Toggles the LED and calls the software delay between steps. |
+| AK Base Kit | `uart/hello` | UART | Writes a line over USART1 and waits between writes. |
+| AK Base Kit | `timer/blink` | Timer | Empty. The TIM2 overflow interrupt toggles the LED through a callback. |
+| Raspberry Pi Pico | `gpio/led_blink` | GPIO | Same source as the STM32 blink, built for RP2040. |
 
 ## Build
 
