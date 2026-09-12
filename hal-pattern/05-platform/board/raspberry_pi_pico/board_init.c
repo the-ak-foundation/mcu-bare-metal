@@ -6,9 +6,9 @@
 /** Performs initialization specific to the Raspberry Pi Pico. */
 void bsp_init(void * p_args)
 {
-    HAL_PARAMETER_NOT_USED(p_args);
+	HAL_PARAMETER_NOT_USED(p_args);
 
-    bsp_clock_init();
+	bsp_clock_init();
 }
 
 #endif
