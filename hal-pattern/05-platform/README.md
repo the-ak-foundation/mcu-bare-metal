@@ -1,6 +1,6 @@
 # 05-platform - The HAL project
 
-This is the HAL. Folders 00 to 04 walked through the driver-access techniques on the same LED blink. Here we stop iterating on one file and start building the real thing: a layered HAL project with an API per peripheral, one instance driver per MCU peripheral, a BSP layer, and per-project config. GPIO, UART, and Timer are the three working modules under `examples/`.
+This is the HAL. Folders 00 to 04 walked through the driver-access techniques on the same LED blink. Here we stop iterating on one file and start building the real thing: a layered HAL project with an API per peripheral, one instance driver per MCU peripheral, a BSP layer, and per-project config. LED blink is its first working module. Every new peripheral (UART, ADC, and so on) will come as a new example under `examples/`.
 
 The application code (`hal_entry.c`) does not depend on the MCU. Porting to a new chip is done by adding a new instance driver and binding it in `hal_data.c`; the application stays the same.
 
@@ -13,21 +13,26 @@ Demo clip for every learning example lives in the [root README](../../README.md#
 ├── Makefile                             # build one example and target
 ├── README.md
 ├── board/
-│   └── ak_base_kit/                     # board init, LED table, board.h
+│   ├── ak_base_kit/                     # board init, LED table, board.h (STM32L1)
+│   └── raspberry_pi_pico/               # board init, LED table, board.h (RP2040)
 ├── cmsis/                               # Cortex M and MCU register definitions
+│   └── rp2040/                          # RP2040 register + pico-sdk header subset
 ├── examples/
-│   └── ak_base_kit/
+│   ├── ak_base_kit/
+│   │   └── gpio/
+│   │       └── led_blink/
+│   │           ├── hal_cfg/
+│   │           │   ├── bsp/
+│   │           │   │   ├── bsp_cfg.h         # project BSP config (assert, param check)
+│   │           │   │   └── bsp_clock_cfg.h   # project clock tree config
+│   │           │   └── driver/
+│   │           │       └── stm32l1_gpio_cfg.h
+│   │           ├── hal_gen/             # generated: hal_data.[ch], pin_data.[ch]
+│   │           └── src/
+│   │               └── hal_entry.c      # application entry
+│   └── raspberry_pi_pico/
 │       └── gpio/
-│           └── led_blink/
-│               ├── hal_cfg/
-│               │   ├── bsp/
-│               │   │   ├── bsp_cfg.h         # project BSP config (assert, param check)
-│               │   │   └── bsp_clock_cfg.h   # project clock tree config
-│               │   └── driver/
-│               │       └── stm32l1_gpio_cfg.h
-│               ├── hal_gen/             # generated: hal_data.[ch], pin_data.[ch]
-│               └── src/
-│                   └── hal_entry.c      # application entry
+│           └── led_blink/               # same layout, byte-identical hal_entry.c
 ├── hal/
 │   ├── inc/
 │   │   ├── api/                         # interfaces shared by all MCUs
@@ -36,10 +41,13 @@ Demo clip for every learning example lives in the [root README](../../README.md#
 │       ├── bsp/
 │       │   └── mcu/
 │       │       ├── all/                 # bsp_common, bsp_delay, bsp_io, bsp_compiler_support
-│       │       └── stm32l1/             # STM32L1 clock initialization
-│       └── stm32l1_gpio/                # STM32L1 GPIO driver instance
+│       │       ├── stm32l1/             # STM32L1 clock initialization
+│       │       └── rp2040/              # RP2040 clock initialization
+│       ├── stm32l1_gpio/                # STM32L1 GPIO driver instance
+│       └── rp2040_gpio/                 # RP2040 GPIO driver instance
 └── script/
-    └── stm32l151cbtx_flash.ld           # STM32L151CB Flash and RAM layout
+    ├── stm32l151cbtx_flash.ld           # STM32L151CB Flash and RAM layout
+    └── rp2040_flash.ld                  # RP2040 external QSPI Flash and SRAM layout
 ```
 
 Each peripheral instance lives in its own folder under `hal/src/`, named `<mcu>_<peripheral>/`. Application code sees only the API in `hal/inc/api/`; the instance vtable in `hal_data.c` is what glues the two together.
