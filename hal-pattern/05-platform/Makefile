@@ -2,6 +2,16 @@ NAME_MODULE ?= led_blink
 PROJECT_DIR ?= examples/ak_base_kit/gpio/$(NAME_MODULE)
 OBJECTS_DIR  = build_$(NAME_MODULE)
 
+MCU ?= stm32l1
+
+ifeq ($(MCU),stm32l1)
+MCU_FLAGS = -mcpu=cortex-m3 -mthumb
+else ifeq ($(MCU),rp2040)
+MCU_FLAGS = -mcpu=cortex-m0plus -mthumb
+else
+$(error unknown MCU: $(MCU))
+endif
+
 GCC_PATH         = $(HOME)/workspace/tools/gcc-arm-none-eabi-10.3-2021.10-x86_64-linux/gcc-arm-none-eabi-10.3-2021.10
 PROGRAMER_PATH   = $(HOME)/workspace/tools/STM32CubeProgrammer/bin
 OPENOCD_CFG_PATH = /usr/share/openocd/scripts/board/stm32ldiscovery.cfg
@@ -13,7 +23,7 @@ CC      = $(CROSS)gcc
 OBJCOPY = $(CROSS)objcopy
 SIZE    = $(CROSS)size
 
-CFLAGS  = -mcpu=cortex-m3 -mthumb -std=c99 -Os -g -Wall -Wextra \
+CFLAGS  = $(MCU_FLAGS) -std=c99 -Os -g -Wall -Wextra \
           -ffunction-sections -fdata-sections -fsigned-char -fmessage-length=0 \
           -DSTM32L151xB -MMD -MP \
           -Icmsis -Iboard/ak_base_kit \
@@ -22,7 +32,7 @@ CFLAGS  = -mcpu=cortex-m3 -mthumb -std=c99 -Os -g -Wall -Wextra \
           -I$(PROJECT_DIR)/hal_cfg/bsp -I$(PROJECT_DIR)/hal_cfg/driver \
           -I$(PROJECT_DIR)/hal_gen
 
-LDFLAGS = -mcpu=cortex-m3 -mthumb -T script/stm32l151cbtx_flash.ld \
+LDFLAGS = $(MCU_FLAGS) -T script/stm32l151cbtx_flash.ld \
           -Wl,--gc-sections -Wl,-Map=$(OBJECTS_DIR)/$(NAME_MODULE).map \
           --specs=nano.specs --specs=nosys.specs
 LDLIBS  = -lc -lm -lnosys
