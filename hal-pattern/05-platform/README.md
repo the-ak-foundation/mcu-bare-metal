@@ -87,39 +87,65 @@ Each folder under `examples/<board>/` is one working firmware. Pick which to bui
 
 Needs the Arm GNU Toolchain (arm-none-eabi-gcc, tested with GCC 10.3). The Makefile expects it at `GCC_PATH`. Override on the command line if installed elsewhere.
 
-Build the default LED blink firmware:
+Pick the target with `MCU=`. Default is `stm32l1`.
 
 ```sh
-make
+make                       # stm32l1, led_blink for AK Base Kit
+make MCU=rp2040 NAME_MODULE=led_blink PROJECT_DIR=examples/raspberry_pi_pico/gpio/led_blink
 ```
 
-Build a different example by pointing `NAME_MODULE` and `PROJECT_DIR` at it:
+Build a different STM32L1 example by pointing `NAME_MODULE` and `PROJECT_DIR` at it:
 
 ```sh
 make NAME_MODULE=led_blink   PROJECT_DIR=examples/ak_base_kit/gpio/led_blink
-make NAME_MODULE=echo        PROJECT_DIR=examples/ak_base_kit/uart/echo
+make NAME_MODULE=hello       PROJECT_DIR=examples/ak_base_kit/uart/hello
+make NAME_MODULE=blink       PROJECT_DIR=examples/ak_base_kit/timer/blink
 ```
 
-Output goes to `build_<NAME_MODULE>/<NAME_MODULE>.{elf,map,bin}`.
+Output goes to `build_<NAME_MODULE>/<NAME_MODULE>.{elf,map,bin}`. For RP2040, `make uf2` also produces `<NAME_MODULE>.uf2`.
 
 Clean:
 
 ```sh
 make clean
+make MCU=rp2040 NAME_MODULE=led_blink PROJECT_DIR=examples/raspberry_pi_pico/gpio/led_blink clean
 ```
 
 ## Flash
+
+### STM32L1 (SWD, STM32CubeProgrammer)
 
 The firmware in `build_<NAME_MODULE>/<NAME_MODULE>.bin` is a standalone image linked at `0x08000000`.
 
 > **Warning:** the AK Embedded Base Kit ships with an AK bootloader at the same flash origin. Flashing this image with SWD overwrites the bootloader. Save the bootloader image first if you want to restore it later.
 
-Uses STM32CubeProgrammer over SWD. Default path is `$(HOME)/workspace/tools/STM32CubeProgrammer/bin`. Override with `PROGRAMER_PATH` if installed elsewhere.
+Default programmer path is `$(HOME)/workspace/tools/STM32CubeProgrammer/bin`. Override with `PROGRAMER_PATH` if installed elsewhere.
 
 ```sh
 make flash
 make flash PROGRAMER_PATH=/opt/st/stm32cubeprog/bin
 make flash APP_START_ADDR=0x08003000     # skip the AK bootloader region
+```
+
+### RP2040 (UF2 mass-storage)
+
+Hold `BOOTSEL` on the Pico while plugging in USB. The board mounts as `RPI-RP2`. Build and drop the UF2 onto it:
+
+```sh
+make MCU=rp2040 NAME_MODULE=led_blink PROJECT_DIR=examples/raspberry_pi_pico/gpio/led_blink uf2
+cp build_led_blink/led_blink.uf2 /media/$USER/RPI-RP2/
+```
+
+Needs `picotool` on `PATH`. Override with `PICOTOOL=/path/to/picotool` if installed elsewhere.
+
+### RP2040 (SWD, openocd)
+
+With a CMSIS-DAP probe (e.g. Raspberry Pi Debug Probe) wired to `SWCLK`/`SWDIO`/`GND`:
+
+```sh
+make MCU=rp2040 NAME_MODULE=led_blink PROJECT_DIR=examples/raspberry_pi_pico/gpio/led_blink flash
+make MCU=rp2040 ... flash PICO_SWD_ADAPTER=interface/raspberrypi-swd.cfg   # Pico Probe over GPIO
+make MCU=rp2040 ... flash PICO_SWD_SPEED_HZ=1000                            # slower link
 ```
 
 ## Debug
