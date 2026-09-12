@@ -47,30 +47,37 @@ BIN = $(OBJECTS_DIR)/$(NAME_MODULE).bin
 ## GDB command for debugging
 ARM_GDB = $(GCC_PATH)/bin/arm-none-eabi-gdb-py
 
-CMSIS_SRC = \
-    cmsis/system_stm32l1xx.c
-
-BSP_SRC = \
+COMMON_BSP_SRC = \
     hal/src/bsp/mcu/all/bsp_common.c \
-    hal/src/bsp/mcu/all/bsp_delay.c \
-    hal/src/bsp/mcu/stm32l1/bsp_clocks.c
+    hal/src/bsp/mcu/all/bsp_delay.c
 
-HAL_SRC = \
+ifeq ($(MCU),stm32l1)
+CMSIS_SRC   = cmsis/system_stm32l1xx.c
+BSP_SRC     = $(COMMON_BSP_SRC) hal/src/bsp/mcu/stm32l1/bsp_clocks.c
+HAL_SRC     = \
     hal/src/stm32l1_gpio/stm32l1_gpio.c \
     hal/src/stm32l1_uart/stm32l1_uart.c \
     hal/src/stm32l1_tim/stm32l1_tim.c
-
-BOARD_SRC = \
+BOARD_SRC   = \
     board/ak_base_kit/board_init.c \
     board/ak_base_kit/board_leds.c
+STARTUP_SRC = cmsis/startup_stm32l151xb.s
+else ifeq ($(MCU),rp2040)
+CMSIS_SRC   =
+BSP_SRC     = $(COMMON_BSP_SRC) hal/src/bsp/mcu/rp2040/bsp_clocks.c
+HAL_SRC     = \
+    hal/src/rp2040_gpio/rp2040_gpio.c
+BOARD_SRC   = \
+    board/raspberry_pi_pico/board_init.c \
+    board/raspberry_pi_pico/board_leds.c
+STARTUP_SRC = cmsis/rp2040/startup_rp2040.s
+endif
 
 GEN_SRC = \
     $(PROJECT_DIR)/hal_gen/hal_data.c \
     $(PROJECT_DIR)/hal_gen/pin_data.c
 
 APP_SRC = $(PROJECT_DIR)/src/hal_entry.c
-
-STARTUP_SRC = cmsis/startup_stm32l151xb.s
 
 C_SRC = $(CMSIS_SRC) $(BSP_SRC) $(HAL_SRC) $(BOARD_SRC) $(GEN_SRC) $(APP_SRC)
 OBJ   = $(addprefix $(OBJECTS_DIR)/,$(C_SRC:.c=.o) $(STARTUP_SRC:.s=.o))
