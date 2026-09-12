@@ -36,7 +36,13 @@ CFLAGS  = $(MCU_FLAGS) -std=c99 -Os -g -Wall -Wextra \
           -I$(PROJECT_DIR)/hal_cfg/bsp -I$(PROJECT_DIR)/hal_cfg/driver \
           -I$(PROJECT_DIR)/hal_gen
 
-LDFLAGS = $(MCU_FLAGS) -T script/stm32l151cbtx_flash.ld \
+ifeq ($(MCU),stm32l1)
+LINKER_SCRIPT = script/stm32l151cbtx_flash.ld
+else ifeq ($(MCU),rp2040)
+LINKER_SCRIPT = script/rp2040_flash.ld
+endif
+
+LDFLAGS = $(MCU_FLAGS) -T $(LINKER_SCRIPT) \
           -Wl,--gc-sections -Wl,-Map=$(OBJECTS_DIR)/$(NAME_MODULE).map \
           --specs=nano.specs --specs=nosys.specs
 LDLIBS  = -lc -lm -lnosys
@@ -70,7 +76,7 @@ HAL_SRC     = \
 BOARD_SRC   = \
     board/raspberry_pi_pico/board_init.c \
     board/raspberry_pi_pico/board_leds.c
-STARTUP_SRC = cmsis/rp2040/startup_rp2040.s
+STARTUP_SRC = cmsis/startup_rp2040.s
 endif
 
 GEN_SRC = \
