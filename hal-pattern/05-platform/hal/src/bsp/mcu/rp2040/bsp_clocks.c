@@ -133,6 +133,11 @@ static void bsp_prv_clk_switch(void)
 		(CLOCKS_CLK_PERI_CTRL_AUXSRC_VALUE_CLK_SYS << CLOCKS_CLK_PERI_CTRL_AUXSRC_LSB);
 }
 
+static void bsp_prv_clk_peri_init(void)
+{
+	/* Body added in a follow-up step: route clk_peri to XOSC and enable. */
+}
+
 /** Initializes the system clocks: XOSC -> PLL SYS -> clk_sys 125 MHz. */
 void bsp_clock_init(void)
 {
@@ -142,6 +147,7 @@ void bsp_clock_init(void)
 	bsp_prv_xosc_init();
 	bsp_prv_pll_sys_init();
 	bsp_prv_clk_switch();
+	bsp_prv_clk_peri_init();
 
 	SystemCoreClockUpdate();
 }
