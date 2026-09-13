@@ -127,15 +127,18 @@ static void bsp_prv_clk_switch(void)
 	{
 	}
 
-	/* Feed peripherals from clk_sys. */
-	RP2040_REG(CLOCKS_BASE + CLOCKS_CLK_PERI_CTRL_OFFSET) =
-		CLOCKS_CLK_PERI_CTRL_ENABLE_BITS |
-		(CLOCKS_CLK_PERI_CTRL_AUXSRC_VALUE_CLK_SYS << CLOCKS_CLK_PERI_CTRL_AUXSRC_LSB);
 }
 
 static void bsp_prv_clk_peri_init(void)
 {
-	/* Body added in a follow-up step: route clk_peri to XOSC and enable. */
+	/* Disable clk_peri before switching source (glitch-free per RP2040 §2.15.3). */
+	RP2040_REG(CLOCKS_BASE + REG_ALIAS_CLR_BITS + CLOCKS_CLK_PERI_CTRL_OFFSET) =
+		CLOCKS_CLK_PERI_CTRL_ENABLE_BITS;
+
+	/* Route from XOSC 12 MHz: stable baud source, independent of PLL reconfig. */
+	RP2040_REG(CLOCKS_BASE + CLOCKS_CLK_PERI_CTRL_OFFSET) =
+		CLOCKS_CLK_PERI_CTRL_ENABLE_BITS |
+		(CLOCKS_CLK_PERI_CTRL_AUXSRC_VALUE_XOSC_CLKSRC << CLOCKS_CLK_PERI_CTRL_AUXSRC_LSB);
 }
 
 /** Initializes the system clocks: XOSC -> PLL SYS -> clk_sys 125 MHz. */
