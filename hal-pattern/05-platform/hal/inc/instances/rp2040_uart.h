@@ -24,6 +24,13 @@ typedef struct st_rp2040_uart_extended_cfg
 	uint32_t baud;   /* baud rate in bits per second, e.g. 115200 */
 } rp2040_uart_extended_cfg_t;
 
+/** RP2040 UART channel selector for hal_uart_cfg_t::channel. */
+typedef enum e_rp2040_uart_channel
+{
+	RP2040_UART_CHANNEL_UART0 = 0,
+	RP2040_UART_CHANNEL_UART1 = 1
+} rp2040_uart_channel_t;
+
 HAL_FOOTER
 
 #endif // __RP2040_UART_H__
