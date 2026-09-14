@@ -31,6 +31,17 @@ typedef enum e_rp2040_uart_channel
 	RP2040_UART_CHANNEL_UART1 = 1
 } rp2040_uart_channel_t;
 
+/** UART implementation for RP2040. */
+extern const hal_uart_api_t g_uart_on_rp2040_uart;
+
+hal_err_t RP2040_UART_Open(hal_uart_ctrl_t * const p_ctrl, hal_uart_cfg_t const * const p_cfg);
+hal_err_t RP2040_UART_Close(hal_uart_ctrl_t * const p_ctrl);
+hal_err_t RP2040_UART_Read(hal_uart_ctrl_t * const p_ctrl, uint8_t * const p_dest, uint32_t const bytes);
+hal_err_t RP2040_UART_Write(hal_uart_ctrl_t * const p_ctrl, uint8_t const * const p_src, uint32_t const bytes);
+hal_err_t RP2040_UART_CallbackSet(hal_uart_ctrl_t * const p_ctrl,
+                                  void                 (* p_callback)(hal_uart_callback_args_t *),
+                                  void * const            p_context);
+
 HAL_FOOTER
 
 #endif // __RP2040_UART_H__
