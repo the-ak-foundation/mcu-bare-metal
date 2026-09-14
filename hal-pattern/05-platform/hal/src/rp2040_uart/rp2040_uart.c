@@ -11,6 +11,8 @@ static uint32_t rp2040_uart_base_get(uint8_t channel);
 static uint32_t rp2040_uart_reset_bit(uint8_t channel);
 static void     rp2040_uart_reset_unblock(uint32_t reset_bit);
 static void     rp2040_uart_baud_set(uint32_t base, uint32_t baud);
+static void     rp2040_uart_line_set(uint32_t base, hal_uart_cfg_t const * p_cfg);
+static void     rp2040_uart_enable(uint32_t base);
 
 const hal_uart_api_t g_uart_on_rp2040_uart =
 {
@@ -41,6 +43,8 @@ hal_err_t RP2040_UART_Open(hal_uart_ctrl_t * const p_ctrl, hal_uart_cfg_t const 
 
 	rp2040_uart_reset_unblock(rp2040_uart_reset_bit(p_cfg->channel));
 	rp2040_uart_baud_set(base, p_ext->baud);
+	rp2040_uart_line_set(base, p_cfg);
+	rp2040_uart_enable(base);
 
 	p_instance_ctrl->base       = base;
 	p_instance_ctrl->channel    = p_cfg->channel;
@@ -120,4 +124,33 @@ static void rp2040_uart_baud_set(uint32_t base, uint32_t baud)
 
 	RP2040_REG(base + UART_UARTIBRD_OFFSET) = ibrd;
 	RP2040_REG(base + UART_UARTFBRD_OFFSET) = fbrd;
+}
+
+static void rp2040_uart_line_set(uint32_t base, hal_uart_cfg_t const * p_cfg)
+{
+	uint32_t lcr = (((uint32_t) p_cfg->data_bits - 5U) << UART_UARTLCR_H_WLEN_LSB) & UART_UARTLCR_H_WLEN_BITS;
+
+	lcr |= UART_UARTLCR_H_FEN_BITS;
+
+	if (HAL_UART_STOP_BITS_2 == p_cfg->stop_bits)
+	{
+		lcr |= UART_UARTLCR_H_STP2_BITS;
+	}
+	if (HAL_UART_PARITY_OFF != p_cfg->parity)
+	{
+		lcr |= UART_UARTLCR_H_PEN_BITS;
+		if (HAL_UART_PARITY_EVEN == p_cfg->parity)
+		{
+			lcr |= UART_UARTLCR_H_EPS_BITS;
+		}
+	}
+
+	/* LCR_H write also latches baud dividers into the shift clock. */
+	RP2040_REG(base + UART_UARTLCR_H_OFFSET) = lcr;
+}
+
+static void rp2040_uart_enable(uint32_t base)
+{
+	RP2040_REG(base + UART_UARTCR_OFFSET) =
+		UART_UARTCR_UARTEN_BITS | UART_UARTCR_TXE_BITS | UART_UARTCR_RXE_BITS;
 }
