@@ -25,6 +25,7 @@
 #include "hardware/regs/xosc.h"
 #include "hardware/regs/watchdog.h"
 #include "hardware/regs/m0plus.h"
+#include "hardware/regs/uart.h"
 
 /* Raw memory-mapped register access helper. */
 #define RP2040_REG(addr)    (*(volatile uint32_t *)(addr))
