@@ -85,9 +85,25 @@ hal_err_t RP2040_UART_Read(hal_uart_ctrl_t * const p_ctrl, uint8_t * const p_des
 
 hal_err_t RP2040_UART_Write(hal_uart_ctrl_t * const p_ctrl, uint8_t const * const p_src, uint32_t const bytes)
 {
-	(void) p_ctrl;
-	(void) p_src;
-	(void) bytes;
+	rp2040_uart_instance_ctrl_t * p_instance_ctrl = (rp2040_uart_instance_ctrl_t *) p_ctrl;
+
+#if (1 == RP2040_UART_CFG_PARAM_CHECKING_ENABLE)
+	HAL_ASSERT(NULL != p_instance_ctrl);
+	HAL_ASSERT(NULL != p_src);
+	HAL_ERROR_RETURN(0U != bytes, HAL_ERR_INVALID_ARGUMENT);
+	HAL_ERROR_RETURN(RP2040_UART_OPEN == p_instance_ctrl->open, HAL_ERR_NOT_OPEN);
+#endif
+
+	uint32_t base = p_instance_ctrl->base;
+
+	for (uint32_t i = 0U; i < bytes; i++)
+	{
+		while (0U != (RP2040_REG(base + UART_UARTFR_OFFSET) & UART_UARTFR_TXFF_BITS))
+		{
+		}
+		RP2040_REG(base + UART_UARTDR_OFFSET) = p_src[i];
+	}
+
 	return HAL_SUCCESS;
 }
 
