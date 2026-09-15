@@ -57,7 +57,21 @@ hal_err_t RP2040_UART_Open(hal_uart_ctrl_t * const p_ctrl, hal_uart_cfg_t const 
 
 hal_err_t RP2040_UART_Close(hal_uart_ctrl_t * const p_ctrl)
 {
-	(void) p_ctrl;
+	rp2040_uart_instance_ctrl_t * p_instance_ctrl = (rp2040_uart_instance_ctrl_t *) p_ctrl;
+
+#if (1 == RP2040_UART_CFG_PARAM_CHECKING_ENABLE)
+	HAL_ASSERT(NULL != p_instance_ctrl);
+	HAL_ERROR_RETURN(RP2040_UART_OPEN == p_instance_ctrl->open, HAL_ERR_NOT_OPEN);
+#endif
+
+	/* Wait for any in-flight byte to leave the shifter before shutting off. */
+	while (0U != (RP2040_REG(p_instance_ctrl->base + UART_UARTFR_OFFSET) & UART_UARTFR_BUSY_BITS))
+	{
+	}
+
+	RP2040_REG(p_instance_ctrl->base + UART_UARTCR_OFFSET) = 0U;
+	p_instance_ctrl->open = RP2040_UART_CLOSED;
+
 	return HAL_SUCCESS;
 }
 
