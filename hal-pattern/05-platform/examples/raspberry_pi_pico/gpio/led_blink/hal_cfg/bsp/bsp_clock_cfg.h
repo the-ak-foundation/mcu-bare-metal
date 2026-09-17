@@ -7,5 +7,6 @@
 #define BSP_CFG_PLL_SYS_POSTDIV1    (6)
 #define BSP_CFG_PLL_SYS_POSTDIV2    (2)
 #define BSP_CFG_SYSCLK_HZ           (125000000)
+#define BSP_CFG_PERI_CLK_HZ         (12000000)
 
 #endif // __BSP_CLOCK_CFG_H__

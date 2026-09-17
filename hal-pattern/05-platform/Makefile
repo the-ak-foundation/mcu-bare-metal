@@ -72,7 +72,8 @@ else ifeq ($(MCU),rp2040)
 CMSIS_SRC   =
 BSP_SRC     = $(COMMON_BSP_SRC) hal/src/bsp/mcu/rp2040/bsp_clocks.c
 HAL_SRC     = \
-    hal/src/rp2040_gpio/rp2040_gpio.c
+    hal/src/rp2040_gpio/rp2040_gpio.c \
+    hal/src/rp2040_uart/rp2040_uart.c
 BOARD_SRC   = \
     board/raspberry_pi_pico/board_init.c \
     board/raspberry_pi_pico/board_leds.c
