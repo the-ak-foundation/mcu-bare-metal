@@ -87,6 +87,7 @@ Each folder under `examples/<board>/` is one working firmware. Pick which to bui
 | AK Base Kit | `uart/hello` | UART | Writes a line over USART1 and waits between writes. |
 | AK Base Kit | `timer/blink` | Timer | Empty. The TIM2 overflow interrupt toggles the LED through a callback. |
 | Raspberry Pi Pico | `gpio/led_blink` | GPIO | Same source as the STM32 blink, built for RP2040. |
+| Raspberry Pi Pico | `uart/hello` | UART | Same source as the STM32 hello, writes over UART0 (GPIO0 TX, GPIO1 RX). |
 
 ## Build
 
