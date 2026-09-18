@@ -89,6 +89,8 @@ Each folder under `examples/<board>/` is one working firmware. Pick which to bui
 | Raspberry Pi Pico | `gpio/led_blink` | GPIO | Same source as the STM32 blink, built for RP2040. |
 | Raspberry Pi Pico | `uart/hello` | UART | Same source as the STM32 hello, writes over UART0 (GPIO0 TX, GPIO1 RX). |
 
+Each Pico example ships the same `hal_entry.c` as its AK Base Kit twin, byte-for-byte. Only the `hal_gen/`, `hal_cfg/`, and MCU driver folders change per target.
+
 ## Build
 
 Needs the Arm GNU Toolchain (arm-none-eabi-gcc, tested with GCC 10.3). The Makefile expects it at `GCC_PATH`. Override on the command line if installed elsewhere.
