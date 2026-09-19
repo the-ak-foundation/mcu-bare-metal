@@ -1,0 +1,2 @@
+# Makefile output: build_<NAME_MODULE>/ per example.
+build_*/
