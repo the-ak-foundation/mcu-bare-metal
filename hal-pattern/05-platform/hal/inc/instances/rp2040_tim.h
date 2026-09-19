@@ -25,6 +25,15 @@ typedef struct st_rp2040_tim_extended_cfg
 	uint32_t reserved;
 } rp2040_tim_extended_cfg_t;
 
+/** RP2040 TIM channel selector for hal_timer_cfg_t::channel. One channel = one alarm. */
+typedef enum e_rp2040_tim_channel
+{
+	RP2040_TIM_CHANNEL_ALARM0 = 0,
+	RP2040_TIM_CHANNEL_ALARM1 = 1,
+	RP2040_TIM_CHANNEL_ALARM2 = 2,
+	RP2040_TIM_CHANNEL_ALARM3 = 3
+} rp2040_tim_channel_t;
+
 HAL_FOOTER
 
 #endif // __RP2040_TIM_H__
