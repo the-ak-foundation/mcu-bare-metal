@@ -131,7 +131,16 @@ static void bsp_prv_clk_switch(void)
 
 static void bsp_prv_watchdog_tick_init(void)
 {
-	/* Body added in a follow-up step: gate watchdog tick to 1 MHz for TIMER. */
+	/* Divide clk_ref (XOSC 12 MHz) down to 1 MHz for the TIMER counter and
+	 * enable the tick generator. CYCLES = clk_ref / 1e6 = 12. */
+	uint32_t cycles = BSP_CFG_XTAL_HZ / 1000000U;
+
+	RP2040_REG(WATCHDOG_BASE + WATCHDOG_TICK_OFFSET) =
+		WATCHDOG_TICK_ENABLE_BITS | (cycles & WATCHDOG_TICK_CYCLES_BITS);
+
+	while (0U == (RP2040_REG(WATCHDOG_BASE + WATCHDOG_TICK_OFFSET) & WATCHDOG_TICK_RUNNING_BITS))
+	{
+	}
 }
 
 static void bsp_prv_clk_peri_init(void)
