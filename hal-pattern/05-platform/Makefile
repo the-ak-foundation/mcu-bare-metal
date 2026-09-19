@@ -7,7 +7,7 @@ MCU ?= stm32l1
 ifeq ($(MCU),stm32l1)
 MCU_FLAGS    = -mcpu=cortex-m3 -mthumb
 MCU_CPPFLAGS = -DSTM32L151xB \
-               -Icmsis -Iboard/ak_base_kit \
+               -Icmsis/stm32l1 -Iboard/ak_base_kit \
                -Ihal/src/bsp/mcu/stm32l1
 else ifeq ($(MCU),rp2040)
 MCU_FLAGS    = -mcpu=cortex-m0plus -mthumb
@@ -58,7 +58,7 @@ COMMON_BSP_SRC = \
     hal/src/bsp/mcu/all/bsp_delay.c
 
 ifeq ($(MCU),stm32l1)
-CMSIS_SRC   = cmsis/system_stm32l1xx.c
+CMSIS_SRC   = cmsis/stm32l1/system_stm32l1xx.c
 BSP_SRC     = $(COMMON_BSP_SRC) hal/src/bsp/mcu/stm32l1/bsp_clocks.c
 HAL_SRC     = \
     hal/src/stm32l1_gpio/stm32l1_gpio.c \
@@ -67,7 +67,7 @@ HAL_SRC     = \
 BOARD_SRC   = \
     board/ak_base_kit/board_init.c \
     board/ak_base_kit/board_leds.c
-STARTUP_SRC = cmsis/startup_stm32l151xb.s
+STARTUP_SRC = cmsis/stm32l1/startup_stm32l151xb.s
 else ifeq ($(MCU),rp2040)
 CMSIS_SRC   =
 BSP_SRC     = $(COMMON_BSP_SRC) hal/src/bsp/mcu/rp2040/bsp_clocks.c
@@ -77,7 +77,7 @@ HAL_SRC     = \
 BOARD_SRC   = \
     board/raspberry_pi_pico/board_init.c \
     board/raspberry_pi_pico/board_leds.c
-STARTUP_SRC = cmsis/startup_rp2040.s
+STARTUP_SRC = cmsis/rp2040/startup_rp2040.s
 endif
 
 GEN_SRC = \
