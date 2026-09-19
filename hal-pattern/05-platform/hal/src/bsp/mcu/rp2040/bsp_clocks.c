@@ -129,6 +129,11 @@ static void bsp_prv_clk_switch(void)
 
 }
 
+static void bsp_prv_watchdog_tick_init(void)
+{
+	/* Body added in a follow-up step: gate watchdog tick to 1 MHz for TIMER. */
+}
+
 static void bsp_prv_clk_peri_init(void)
 {
 	/* Disable clk_peri before switching source (glitch-free per RP2040 §2.15.3). */
@@ -151,6 +156,7 @@ void bsp_clock_init(void)
 	bsp_prv_pll_sys_init();
 	bsp_prv_clk_switch();
 	bsp_prv_clk_peri_init();
+	bsp_prv_watchdog_tick_init();
 
 	SystemCoreClockUpdate();
 }
