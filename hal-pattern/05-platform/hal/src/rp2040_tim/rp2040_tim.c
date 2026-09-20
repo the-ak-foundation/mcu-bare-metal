@@ -6,6 +6,8 @@
 
 #define RP2040_TIM_PRV_CHANNEL_MAX    (4U)
 
+static void rp2040_tim_reset_unblock(void);
+
 const hal_timer_api_t g_timer_on_rp2040_tim =
 {
 	.open        = RP2040_TIM_Open,
@@ -82,4 +84,14 @@ hal_err_t RP2040_TIM_CallbackSet(hal_timer_ctrl_t * const p_ctrl,
 	p_instance_ctrl->p_context  = p_context;
 
 	return HAL_SUCCESS;
+}
+
+static void rp2040_tim_reset_unblock(void)
+{
+	uint32_t mask = RESETS_RESET_TIMER_BITS;
+
+	RP2040_REG(RESETS_BASE + REG_ALIAS_CLR_BITS + RESETS_RESET_OFFSET) = mask;
+	while ((RP2040_REG(RESETS_BASE + RESETS_RESET_DONE_OFFSET) & mask) != mask)
+	{
+	}
 }
