@@ -32,6 +32,8 @@ hal_err_t RP2040_TIM_Open(hal_timer_ctrl_t * const p_ctrl, hal_timer_cfg_t const
 	HAL_PARAMETER_NOT_USED(p_ctrl);
 #endif
 
+	rp2040_tim_reset_unblock();
+
 	p_instance_ctrl->channel    = p_cfg->channel;
 	p_instance_ctrl->mode       = p_cfg->mode;
 	p_instance_ctrl->period_us  = p_cfg->period_us;
