@@ -34,6 +34,18 @@ typedef enum e_rp2040_tim_channel
 	RP2040_TIM_CHANNEL_ALARM3 = 3
 } rp2040_tim_channel_t;
 
+/** Timer implementation for RP2040. */
+extern const hal_timer_api_t g_timer_on_rp2040_tim;
+
+hal_err_t RP2040_TIM_Open(hal_timer_ctrl_t * const p_ctrl, hal_timer_cfg_t const * const p_cfg);
+hal_err_t RP2040_TIM_Close(hal_timer_ctrl_t * const p_ctrl);
+hal_err_t RP2040_TIM_Start(hal_timer_ctrl_t * const p_ctrl);
+hal_err_t RP2040_TIM_Stop(hal_timer_ctrl_t * const p_ctrl);
+hal_err_t RP2040_TIM_PeriodSet(hal_timer_ctrl_t * const p_ctrl, uint32_t const period_us);
+hal_err_t RP2040_TIM_CallbackSet(hal_timer_ctrl_t * const p_ctrl,
+                                 void                 (* p_callback)(hal_timer_callback_args_t *),
+                                 void * const            p_context);
+
 HAL_FOOTER
 
 #endif // __RP2040_TIM_H__
