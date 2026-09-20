@@ -6,7 +6,10 @@
 
 #define RP2040_TIM_PRV_CHANNEL_MAX    (4U)
 
-static void rp2040_tim_reset_unblock(void);
+static void     rp2040_tim_reset_unblock(void);
+static uint32_t rp2040_tim_alarm_offset(uint8_t channel);
+static uint32_t rp2040_tim_channel_bit(uint8_t channel);
+static void     rp2040_tim_alarm_arm(uint8_t channel, uint32_t period_us);
 
 const hal_timer_api_t g_timer_on_rp2040_tim =
 {
@@ -52,7 +55,21 @@ hal_err_t RP2040_TIM_Close(hal_timer_ctrl_t * const p_ctrl)
 
 hal_err_t RP2040_TIM_Start(hal_timer_ctrl_t * const p_ctrl)
 {
-	(void) p_ctrl;
+	rp2040_tim_instance_ctrl_t * p_instance_ctrl = (rp2040_tim_instance_ctrl_t *) p_ctrl;
+
+#if (1 == RP2040_TIM_CFG_PARAM_CHECKING_ENABLE)
+	HAL_ASSERT(NULL != p_instance_ctrl);
+	HAL_ERROR_RETURN(RP2040_TIM_OPEN == p_instance_ctrl->open, HAL_ERR_NOT_OPEN);
+#endif
+
+	uint32_t mask = rp2040_tim_channel_bit(p_instance_ctrl->channel);
+
+	/* Clear stale INT pending then unmask INTE for this alarm. */
+	RP2040_REG(TIMER_BASE + TIMER_INTR_OFFSET) = mask;
+	RP2040_REG(TIMER_BASE + REG_ALIAS_SET_BITS + TIMER_INTE_OFFSET) = mask;
+
+	rp2040_tim_alarm_arm(p_instance_ctrl->channel, p_instance_ctrl->period_us);
+
 	return HAL_SUCCESS;
 }
 
@@ -96,4 +113,23 @@ static void rp2040_tim_reset_unblock(void)
 	while ((RP2040_REG(RESETS_BASE + RESETS_RESET_DONE_OFFSET) & mask) != mask)
 	{
 	}
+}
+
+static uint32_t rp2040_tim_alarm_offset(uint8_t channel)
+{
+	return TIMER_ALARM0_OFFSET + ((uint32_t) channel * 4U);
+}
+
+static uint32_t rp2040_tim_channel_bit(uint8_t channel)
+{
+	return 1U << (uint32_t) channel;
+}
+
+/* Arm ALARMx = TIMERAWL + period_us. Counter runs at 1 MHz so 1 tick = 1 us. */
+static void rp2040_tim_alarm_arm(uint8_t channel, uint32_t period_us)
+{
+	uint32_t now      = RP2040_REG(TIMER_BASE + TIMER_TIMERAWL_OFFSET);
+	uint32_t deadline = now + period_us;
+
+	RP2040_REG(TIMER_BASE + rp2040_tim_alarm_offset(channel)) = deadline;
 }
