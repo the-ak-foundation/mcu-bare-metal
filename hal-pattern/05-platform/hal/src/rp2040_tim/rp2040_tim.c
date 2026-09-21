@@ -49,7 +49,16 @@ hal_err_t RP2040_TIM_Open(hal_timer_ctrl_t * const p_ctrl, hal_timer_cfg_t const
 
 hal_err_t RP2040_TIM_Close(hal_timer_ctrl_t * const p_ctrl)
 {
-	(void) p_ctrl;
+	rp2040_tim_instance_ctrl_t * p_instance_ctrl = (rp2040_tim_instance_ctrl_t *) p_ctrl;
+
+#if (1 == RP2040_TIM_CFG_PARAM_CHECKING_ENABLE)
+	HAL_ASSERT(NULL != p_instance_ctrl);
+	HAL_ERROR_RETURN(RP2040_TIM_OPEN == p_instance_ctrl->open, HAL_ERR_NOT_OPEN);
+#endif
+
+	(void) RP2040_TIM_Stop(p_ctrl);
+	p_instance_ctrl->open = RP2040_TIM_CLOSED;
+
 	return HAL_SUCCESS;
 }
 
