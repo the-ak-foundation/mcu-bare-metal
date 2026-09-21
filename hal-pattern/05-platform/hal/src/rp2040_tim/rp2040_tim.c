@@ -75,7 +75,21 @@ hal_err_t RP2040_TIM_Start(hal_timer_ctrl_t * const p_ctrl)
 
 hal_err_t RP2040_TIM_Stop(hal_timer_ctrl_t * const p_ctrl)
 {
-	(void) p_ctrl;
+	rp2040_tim_instance_ctrl_t * p_instance_ctrl = (rp2040_tim_instance_ctrl_t *) p_ctrl;
+
+#if (1 == RP2040_TIM_CFG_PARAM_CHECKING_ENABLE)
+	HAL_ASSERT(NULL != p_instance_ctrl);
+	HAL_ERROR_RETURN(RP2040_TIM_OPEN == p_instance_ctrl->open, HAL_ERR_NOT_OPEN);
+#endif
+
+	uint32_t mask = rp2040_tim_channel_bit(p_instance_ctrl->channel);
+
+	/* Mask INTE first so a match in flight cannot post a late IRQ.
+	 * Then force-disarm via ARMED (W1C) and clear any raw pending. */
+	RP2040_REG(TIMER_BASE + REG_ALIAS_CLR_BITS + TIMER_INTE_OFFSET) = mask;
+	RP2040_REG(TIMER_BASE + TIMER_ARMED_OFFSET) = mask;
+	RP2040_REG(TIMER_BASE + TIMER_INTR_OFFSET)  = mask;
+
 	return HAL_SUCCESS;
 }
 
