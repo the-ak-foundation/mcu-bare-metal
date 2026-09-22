@@ -10,6 +10,7 @@ static void     rp2040_tim_reset_unblock(void);
 static uint32_t rp2040_tim_alarm_offset(uint8_t channel);
 static uint32_t rp2040_tim_channel_bit(uint8_t channel);
 static void     rp2040_tim_alarm_arm(uint8_t channel, uint32_t period_us);
+static void     rp2040_tim_nvic_enable(uint8_t channel);
 
 const hal_timer_api_t g_timer_on_rp2040_tim =
 {
@@ -36,6 +37,7 @@ hal_err_t RP2040_TIM_Open(hal_timer_ctrl_t * const p_ctrl, hal_timer_cfg_t const
 #endif
 
 	rp2040_tim_reset_unblock();
+	rp2040_tim_nvic_enable(p_cfg->channel);
 
 	p_instance_ctrl->channel    = p_cfg->channel;
 	p_instance_ctrl->mode       = p_cfg->mode;
@@ -171,4 +173,10 @@ static void rp2040_tim_alarm_arm(uint8_t channel, uint32_t period_us)
 	uint32_t deadline = now + period_us;
 
 	RP2040_REG(TIMER_BASE + rp2040_tim_alarm_offset(channel)) = deadline;
+}
+
+/* TIMER_IRQ_0..3 sit at NVIC IRQ numbers 0..3 (see startup vector table). */
+static void rp2040_tim_nvic_enable(uint8_t channel)
+{
+	RP2040_REG(PPB_BASE + M0PLUS_NVIC_ISER_OFFSET) = 1U << (uint32_t) channel;
 }
