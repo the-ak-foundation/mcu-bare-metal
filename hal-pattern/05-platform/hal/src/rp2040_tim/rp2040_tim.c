@@ -104,8 +104,24 @@ hal_err_t RP2040_TIM_Stop(hal_timer_ctrl_t * const p_ctrl)
 
 hal_err_t RP2040_TIM_PeriodSet(hal_timer_ctrl_t * const p_ctrl, uint32_t const period_us)
 {
-	(void) p_ctrl;
-	(void) period_us;
+	rp2040_tim_instance_ctrl_t * p_instance_ctrl = (rp2040_tim_instance_ctrl_t *) p_ctrl;
+
+#if (1 == RP2040_TIM_CFG_PARAM_CHECKING_ENABLE)
+	HAL_ASSERT(NULL != p_instance_ctrl);
+	HAL_ERROR_RETURN(RP2040_TIM_OPEN == p_instance_ctrl->open, HAL_ERR_NOT_OPEN);
+	HAL_ERROR_RETURN(0U != period_us, HAL_ERR_INVALID_ARGUMENT);
+#endif
+
+	p_instance_ctrl->period_us = period_us;
+
+	uint32_t mask = rp2040_tim_channel_bit(p_instance_ctrl->channel);
+
+	/* Re-arm only if this alarm is currently enabled; a stopped timer stays idle. */
+	if (0U != (RP2040_REG(TIMER_BASE + TIMER_INTE_OFFSET) & mask))
+	{
+		rp2040_tim_alarm_arm(p_instance_ctrl->channel, period_us);
+	}
+
 	return HAL_SUCCESS;
 }
 
