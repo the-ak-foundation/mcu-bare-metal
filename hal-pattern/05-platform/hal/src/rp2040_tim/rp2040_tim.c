@@ -11,6 +11,9 @@ static uint32_t rp2040_tim_alarm_offset(uint8_t channel);
 static uint32_t rp2040_tim_channel_bit(uint8_t channel);
 static void     rp2040_tim_alarm_arm(uint8_t channel, uint32_t period_us);
 static void     rp2040_tim_nvic_enable(uint8_t channel);
+static void     rp2040_tim_isr_common(uint8_t channel);
+
+static rp2040_tim_instance_ctrl_t * gp_rp2040_tim_ctrl[RP2040_TIM_PRV_CHANNEL_MAX];
 
 const hal_timer_api_t g_timer_on_rp2040_tim =
 {
@@ -39,6 +42,8 @@ hal_err_t RP2040_TIM_Open(hal_timer_ctrl_t * const p_ctrl, hal_timer_cfg_t const
 	rp2040_tim_reset_unblock();
 	rp2040_tim_nvic_enable(p_cfg->channel);
 
+	gp_rp2040_tim_ctrl[p_cfg->channel] = p_instance_ctrl;
+
 	p_instance_ctrl->channel    = p_cfg->channel;
 	p_instance_ctrl->mode       = p_cfg->mode;
 	p_instance_ctrl->period_us  = p_cfg->period_us;
@@ -59,6 +64,7 @@ hal_err_t RP2040_TIM_Close(hal_timer_ctrl_t * const p_ctrl)
 #endif
 
 	(void) RP2040_TIM_Stop(p_ctrl);
+	gp_rp2040_tim_ctrl[p_instance_ctrl->channel] = NULL;
 	p_instance_ctrl->open = RP2040_TIM_CLOSED;
 
 	return HAL_SUCCESS;
@@ -180,3 +186,42 @@ static void rp2040_tim_nvic_enable(uint8_t channel)
 {
 	RP2040_REG(PPB_BASE + M0PLUS_NVIC_ISER_OFFSET) = 1U << (uint32_t) channel;
 }
+
+static void rp2040_tim_isr_common(uint8_t channel)
+{
+	uint32_t mask = rp2040_tim_channel_bit(channel);
+
+	/* W1C the raw interrupt bit first: mandatory before re-arm to avoid a stuck IRQ. */
+	RP2040_REG(TIMER_BASE + TIMER_INTR_OFFSET) = mask;
+
+	rp2040_tim_instance_ctrl_t * p_instance_ctrl = gp_rp2040_tim_ctrl[channel];
+	if (NULL == p_instance_ctrl)
+	{
+		return;
+	}
+
+	if (HAL_TIMER_MODE_PERIODIC == p_instance_ctrl->mode)
+	{
+		rp2040_tim_alarm_arm(channel, p_instance_ctrl->period_us);
+	}
+	else
+	{
+		RP2040_REG(TIMER_BASE + REG_ALIAS_CLR_BITS + TIMER_INTE_OFFSET) = mask;
+	}
+
+	if (NULL != p_instance_ctrl->p_callback)
+	{
+		hal_timer_callback_args_t args =
+		{
+			.channel   = channel,
+			.event     = HAL_TIMER_EVENT_CYCLE_END,
+			.p_context = p_instance_ctrl->p_context
+		};
+		p_instance_ctrl->p_callback(&args);
+	}
+}
+
+void TIMER_IRQ_0_Handler(void) { rp2040_tim_isr_common(0); }
+void TIMER_IRQ_1_Handler(void) { rp2040_tim_isr_common(1); }
+void TIMER_IRQ_2_Handler(void) { rp2040_tim_isr_common(2); }
+void TIMER_IRQ_3_Handler(void) { rp2040_tim_isr_common(3); }
