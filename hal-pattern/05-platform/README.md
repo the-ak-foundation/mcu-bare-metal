@@ -33,8 +33,10 @@ Demo clip for every learning example lives in the [root README](../../README.md#
 │   └── raspberry_pi_pico/
 │       ├── gpio/
 │       │   └── led_blink/               # same layout, byte-identical hal_entry.c
-│       └── uart/
-│           └── hello/                   # same layout, byte-identical hal_entry.c
+│       ├── uart/
+│       │   └── hello/                   # same layout, byte-identical hal_entry.c
+│       └── timer/
+│           └── blink/                   # same layout, byte-identical hal_entry.c
 ├── hal/
 │   ├── inc/
 │   │   ├── api/                         # interfaces shared by all MCUs
@@ -49,7 +51,8 @@ Demo clip for every learning example lives in the [root README](../../README.md#
 │       ├── stm32l1_uart/                # STM32L1 UART driver instance
 │       ├── stm32l1_tim/                 # STM32L1 Timer driver instance
 │       ├── rp2040_gpio/                 # RP2040 GPIO driver instance
-│       └── rp2040_uart/                 # RP2040 UART driver instance
+│       ├── rp2040_uart/                 # RP2040 UART driver instance
+│       └── rp2040_tim/                  # RP2040 Timer driver instance
 └── script/
     ├── stm32l151cbtx_flash.ld           # STM32L151CB Flash and RAM layout
     └── rp2040_flash.ld                  # RP2040 external QSPI Flash and SRAM layout
