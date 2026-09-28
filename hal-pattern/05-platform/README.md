@@ -91,6 +91,7 @@ Each folder under `examples/<board>/` is one working firmware. Pick which to bui
 | AK Base Kit | `timer/blink` | Timer | Empty. The TIM2 overflow interrupt toggles the LED through a callback. |
 | Raspberry Pi Pico | `gpio/led_blink` | GPIO | Same source as the STM32 blink, built for RP2040. |
 | Raspberry Pi Pico | `uart/hello` | UART | Same source as the STM32 hello, writes over UART0 (GPIO0 TX, GPIO1 RX). |
+| Raspberry Pi Pico | `timer/blink` | Timer | Same source as the STM32 blink. Alarm 0 fires every 500 ms and toggles the LED through a callback. |
 
 Each Pico example ships the same `hal_entry.c` as its AK Base Kit twin, byte-for-byte. Only the `hal_gen/`, `hal_cfg/`, and MCU driver folders change per target.
 
