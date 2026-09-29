@@ -9,7 +9,7 @@
 A two-part path for bare-metal MCU work.
 
 1. **Learn** how an MCU boots and how driver code evolves, from raw registers up to a HAL.
-2. **Build** a portable HAL you can apply to more than one MCU. STM32L151 on the AK Embedded Base Kit is the first target used to write and test it.
+2. **Build** a portable HAL you can apply to more than one MCU. STM32L151 on the AK Embedded Base Kit is the first target used to write and test it, then the same HAL is ported to RP2040 on the Raspberry Pi Pico to prove portability. The two targets share GPIO, UART, and Timer example sources byte-for-byte.
 
 Every learning example blinks the same LED. Each one changes exactly one technique, so the diff between two examples in the same topic shows the new concept.
 
@@ -74,13 +74,14 @@ The three topics feed each other. Read left to right for the learning path; the 
 
 | Folder | Concept |
 |:------:|:-------:|
-| [`hal-pattern/05-platform/`](hal-pattern/05-platform/) | Layered HAL project: API + instance drivers + BSP + per-project config. First working module: GPIO on AK Base Kit |
+| [`hal-pattern/05-platform/`](hal-pattern/05-platform/) | Layered HAL project: API + instance drivers + BSP + per-project config. GPIO, UART, Timer running on STM32L151 (Cortex-M3) and RP2040 (Cortex-M0+) with byte-identical example sources |
 
 ## Hardware support
 
 | Board | MCU | Status |
 |:-----:|:---:|:------:|
 | [AK Embedded Base Kit](https://epcb.vn/products/ak-embedded-base-kit-lap-trinh-nhung-vi-dieu-khien-mcu) | STM32L151CBT6 (ARM Cortex-M3) | Primary target |
+| [Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/) | RP2040 (dual ARM Cortex-M0+, core 0 only) | Portability target for `05-platform` |
 
 ## Quick start
 

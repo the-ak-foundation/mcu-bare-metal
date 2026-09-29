@@ -1,6 +1,8 @@
 # 05-platform - The HAL project
 
-This is the HAL. Folders 00 to 04 walked through the driver-access techniques on the same LED blink. Here we stop iterating on one file and start building the real thing: a layered HAL project with an API per peripheral, one instance driver per MCU peripheral, a BSP layer, and per-project config. LED blink is its first working module. Every new peripheral (UART, ADC, and so on) will come as a new example under `examples/`.
+This is the HAL. Folders 00 to 04 walked through the driver-access techniques on the same LED blink. Here we stop iterating on one file and start building the real thing: a layered HAL project with an API per peripheral, one instance driver per MCU peripheral, a BSP layer, and per-project config.
+
+Current shape: 3 peripheral modules (GPIO, UART, Timer) running on 2 MCUs (STM32L151 Cortex-M3 and RP2040 Cortex-M0+) with byte-identical `hal_entry.c` in each pair. That gives 6 examples under `examples/`, all built from the same Makefile with `MCU=stm32l1` or `MCU=rp2040`.
 
 The application code (`hal_entry.c`) does not depend on the MCU. Porting to a new chip is done by adding a new instance driver and binding it in `hal_data.c`; the application stays the same.
 
@@ -95,6 +97,52 @@ Each folder under `examples/<board>/` is one working firmware. Pick which to bui
 
 Each Pico example ships the same `hal_entry.c` as its AK Base Kit twin, byte-for-byte. Only the `hal_gen/`, `hal_cfg/`, and MCU driver folders change per target.
 
+## Architecture
+
+```text
+    +-----------------------------+
+    |   Application               |   src/hal_entry.c  (byte-identical
+    |   uses generic HAL API      |    across MCUs)
+    +--------------|--------------+
+                   | g_gpio.p_api->pinWrite(...)
+                   v
+    +-----------------------------+
+    |   HAL API                   |   hal/inc/api/ hal_gpio_api.h,
+    |   plain-old vtables         |                 hal_uart_api.h,
+    +--------------|--------------+                 hal_timer_api.h
+                   | resolved at link time
+                   v
+    +-----------------------------+
+    |   Instance vtable           |   hal_gen/hal_data.c
+    |   binds ctrl + cfg + api    |   picks MCU-specific api pointer
+    +--------------|--------------+
+                   | g_<name>_on_<mcu>_<peripheral>
+                   v
+    +-----------------------------+
+    |   MCU driver                |   hal/src/<mcu>_<peripheral>/
+    |   register-level ops        |   raw MMIO through RP2040.h /
+    +--------------|--------------+   stm32l1xx.h
+                   v
+    +-----------------------------+
+    |   Hardware                  |   TIMER / IO_BANK0 / UART / ...
+    +-----------------------------+
+```
+
+Adding a peripheral without breaking portability means adding a new API header + one instance per MCU. Application code never widens.
+
+## Portability
+
+The portability claim is checkable in one line. From this directory:
+
+```sh
+for pair in gpio/led_blink uart/hello timer/blink; do
+    sha256sum examples/ak_base_kit/$pair/src/hal_entry.c \
+              examples/raspberry_pi_pico/$pair/src/hal_entry.c
+done
+```
+
+Each pair must print two identical SHA256 lines. Any diff in `hal_entry.c` between the AK and Pico twin breaks portability and this check catches it.
+
 ## Build
 
 Needs the Arm GNU Toolchain (arm-none-eabi-gcc, tested with GCC 10.3). The Makefile expects it at `GCC_PATH`. Override on the command line if installed elsewhere.
@@ -162,9 +210,31 @@ make MCU=rp2040 ... flash PICO_SWD_SPEED_HZ=1000                            # sl
 
 ## Debug
 
+### STM32L1 (openocd + gdb)
+
 ```sh
-make debug
+make debug              # opens openocd + arm-none-eabi-gdb-py
+make debug gdb=ddd      # DDD frontend around gdb
 ```
+
+Uses the `stm32ldiscovery.cfg` shipped with openocd. Override `OPENOCD_CFG_PATH` for other adapters.
+
+### RP2040 (openocd + gdb)
+
+The `flash` target for RP2040 already runs the openocd sequence. For a live gdb session, run openocd manually and attach:
+
+```sh
+openocd -f interface/cmsis-dap.cfg -f target/rp2040.cfg -c "adapter speed 5000"
+
+# in a second terminal
+arm-none-eabi-gdb build_led_blink/led_blink.elf
+(gdb) target extended-remote localhost:3333
+(gdb) monitor reset init
+(gdb) load
+(gdb) continue
+```
+
+`printf` output over UART is available on GPIO0 once the UART example initialises it. Connect a USB-UART adapter to GPIO0 (TX out) / GND at 115200 8N1.
 
 ## Porting
 
@@ -177,12 +247,14 @@ make debug
 
 **Add a new MCU:**
 
-1. Put the vendor CMSIS headers under `cmsis/` (or a per-MCU subfolder).
-2. Add `hal/src/bsp/mcu/<mcu>/bsp_clocks.[ch]` for clock init.
-3. For each peripheral you use, add `hal/src/<mcu>_<peripheral>/<mcu>_<peripheral>.c` that implements the API vtable `g_<mod>_on_<mcu>_<peripheral>`.
+1. Put the vendor CMSIS headers under `cmsis/<mcu>/`.
+2. Add `hal/src/bsp/mcu/<mcu>/bsp_clocks.[ch]` for clock init. If the MCU has a separate peripheral tick source (RP2040 watchdog tick, for example), init it here too.
+3. For each peripheral you support, add `hal/src/<mcu>_<peripheral>/<mcu>_<peripheral>.c` that implements the API vtable `g_<mod>_on_<mcu>_<peripheral>`.
 4. Add a linker script under `script/` for the new MCU memory map.
 5. Add a startup file that calls `SystemInit` and then `main`. `main` is defined weakly in `bsp_common.c`.
-6. Application code (`hal_entry.c`) does not change. Only `hal_data.c` rebinds the instance vtable to the new driver.
+6. Extend the Makefile: new `MCU=<name>` branch that sets `MCU_FLAGS`, `MCU_CPPFLAGS`, `BSP_SRC`, `HAL_SRC`, `STARTUP_SRC`, and `LINKER_SCRIPT`.
+7. Application code (`hal_entry.c`) does not change. Only `hal_data.c` rebinds the instance vtable to the new driver.
+8. Verify portability: `sha256sum` on each `hal_entry.c` pair must match its twin under `examples/ak_base_kit/`. See the Portability section.
 
 ## References
 
