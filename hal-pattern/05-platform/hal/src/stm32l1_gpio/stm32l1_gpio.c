@@ -1,34 +1,5 @@
 #include "stm32l1_gpio.h"
-#include "stm32l1xx.h"
-
-#define STM32L1_GPIO_OPEN                       (0x4750494FU)    /* "GPIO" */
-#define STM32L1_GPIO_CLOSED                     (0x00000000U)
-
-#define STM32L1_GPIO_PRV_PORT_OFFSET    (8U)
-#define STM32L1_GPIO_PRV_PORT_BITS      (0xFF00U)
-#define STM32L1_GPIO_PRV_PIN_BITS       (0x00FFU)
-#define STM32L1_GPIO_PRV_8BIT_MASK      (0xFFU)
-#define STM32L1_GPIO_PRV_16BIT_MASK     (0xFFFFU)
-
-#define STM32L1_GPIO_PRV_MODE_MASK      (0x00000003U)
-#define STM32L1_GPIO_PRV_OTYPE_MASK     (0x00000004U)
-#define STM32L1_GPIO_PRV_SPEED_MASK     (0x00000018U)
-#define STM32L1_GPIO_PRV_PULL_MASK      (0x00000060U)
-#define STM32L1_GPIO_PRV_OUTPUT_MASK    (0x00000080U)
-#define STM32L1_GPIO_PRV_AF_MASK        (0x00000F00U)
-
-#define STM32L1_GPIO_PRV_OTYPE_OFFSET   (2U)
-#define STM32L1_GPIO_PRV_SPEED_OFFSET   (3U)
-#define STM32L1_GPIO_PRV_PULL_OFFSET    (5U)
-#define STM32L1_GPIO_PRV_OUTPUT_OFFSET  (7U)
-#define STM32L1_GPIO_PRV_AF_OFFSET      (8U)
-
-#define STM32L1_GPIO_PRV_FIELD_MASK     (0x3U)
-#define STM32L1_GPIO_PRV_AF_FIELD_MASK  (0xFU)
-#define STM32L1_GPIO_PRV_AFR_PIN_COUNT  (8U)
-
-#define STM32L1_GPIO_PRV_PORT_ADDRESS(port_number) \
-	((GPIO_TypeDef *) (GPIOA_BASE + ((GPIOB_BASE - GPIOA_BASE) * (port_number))))
+#include "stm32l1_gpio_prv.h"
 
 static void stm32l1_gpio_pins_config(hal_gpio_cfg_t const * p_cfg);
 static void stm32l1_gpio_pin_config(bsp_io_port_pin_t pin, uint32_t cfg);
