@@ -1,9 +1,5 @@
 #include "stm32l1_uart.h"
-
-#define STM32L1_UART_OPEN               (0x55415254U)    /* "UART" */
-#define STM32L1_UART_CLOSED             (0x00000000U)
-
-#define STM32L1_UART_PRV_CHANNEL_MAX    (3U)
+#include "stm32l1_uart_prv.h"
 
 extern uint32_t SystemCoreClock;
 
