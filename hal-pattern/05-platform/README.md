@@ -21,24 +21,13 @@ Demo clip for every learning example lives in the [root README](../../README.md#
 │   └── rp2040/                          # RP2040 register + pico-sdk header subset
 ├── examples/
 │   ├── ak_base_kit/
-│   │   └── gpio/
-│   │       └── led_blink/
-│   │           ├── hal_cfg/
-│   │           │   ├── bsp/
-│   │           │   │   ├── bsp_cfg.h         # project BSP config (assert, param check)
-│   │           │   │   └── bsp_clock_cfg.h   # project clock tree config
-│   │           │   └── driver/
-│   │           │       └── stm32l1_gpio_cfg.h
-│   │           ├── hal_gen/             # generated: hal_data.[ch], pin_data.[ch]
-│   │           └── src/
-│   │               └── hal_entry.c      # application entry
+│   │   ├── gpio/led_blink/
+│   │   ├── uart/hello/
+│   │   └── timer/blink/
 │   └── raspberry_pi_pico/
-│       ├── gpio/
-│       │   └── led_blink/               # same layout, byte-identical hal_entry.c
-│       ├── uart/
-│       │   └── hello/                   # same layout, byte-identical hal_entry.c
-│       └── timer/
-│           └── blink/                   # same layout, byte-identical hal_entry.c
+│       ├── gpio/led_blink/              # byte-identical hal_entry.c with its AK twin
+│       ├── uart/hello/                  # byte-identical hal_entry.c with its AK twin
+│       └── timer/blink/                 # byte-identical hal_entry.c with its AK twin
 ├── hal/
 │   ├── inc/
 │   │   ├── api/                         # interfaces shared by all MCUs
@@ -61,6 +50,18 @@ Demo clip for every learning example lives in the [root README](../../README.md#
 ```
 
 Each peripheral instance lives in its own folder under `hal/src/`, named `<mcu>_<peripheral>/`. Application code sees only the API in `hal/inc/api/`; the instance vtable in `hal_data.c` is what glues the two together.
+
+Every example folder shares the same shape:
+
+```text
+<example>/
+├── hal_cfg/
+│   ├── bsp/           # bsp_cfg.h (assert, param check), bsp_clock_cfg.h (clock tree)
+│   └── driver/        # <mcu>_<peripheral>_cfg.h for each driver the example uses
+├── hal_gen/           # hal_data.[ch], pin_data.[ch]
+└── src/
+    └── hal_entry.c    # application entry
+```
 
 A folder is added with its first working module. No empty placeholders.
 
