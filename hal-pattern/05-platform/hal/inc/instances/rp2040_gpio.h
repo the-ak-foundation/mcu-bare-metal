@@ -63,11 +63,7 @@ typedef enum e_rp2040_gpio_cfg_options
 
 	/* Slew rate (PADS_BANK0 GPIOn.SLEWFAST). */
 	RP2040_GPIO_CFG_SLEW_SLOW          = 0x00000000,
-	RP2040_GPIO_CFG_SLEW_FAST          = 0x00001000,
-
-	/* Input enable (PADS_BANK0 GPIOn.IE). Required for read-back and input use. */
-	RP2040_GPIO_CFG_INPUT_DISABLE      = 0x00000000,
-	RP2040_GPIO_CFG_INPUT_ENABLE       = 0x00002000
+	RP2040_GPIO_CFG_SLEW_FAST          = 0x00001000
 } rp2040_gpio_cfg_options_t;
 
 /** GPIO implementation for RP2040. */

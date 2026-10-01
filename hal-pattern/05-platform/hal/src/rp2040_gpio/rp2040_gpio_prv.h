@@ -18,7 +18,6 @@
 #define RP2040_GPIO_PRV_DRIVE_SHIFT             (9U)
 #define RP2040_GPIO_PRV_SCHMITT_MASK            (0x00000800U)
 #define RP2040_GPIO_PRV_SLEW_MASK               (0x00001000U)
-#define RP2040_GPIO_PRV_INPUT_EN_MASK           (0x00002000U)
 
 /* Per-pin register address helpers. */
 #define RP2040_GPIO_PRV_IO_CTRL_ADDR(pin)       (IO_BANK0_BASE + IO_BANK0_GPIO0_CTRL_OFFSET + ((uint32_t)(pin) * 8U))
