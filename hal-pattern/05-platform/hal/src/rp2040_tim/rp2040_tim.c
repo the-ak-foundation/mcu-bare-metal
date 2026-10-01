@@ -1,10 +1,6 @@
 #include "rp2040_tim.h"
+#include "rp2040_tim_prv.h"
 #include "RP2040.h"
-
-#define RP2040_TIM_OPEN               (0x54494D45U)    /* "TIME" */
-#define RP2040_TIM_CLOSED             (0x00000000U)
-
-#define RP2040_TIM_PRV_CHANNEL_MAX    (4U)
 
 static void     rp2040_tim_reset_unblock(void);
 static uint32_t rp2040_tim_alarm_offset(uint8_t channel);
