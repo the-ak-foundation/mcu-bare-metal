@@ -1,7 +1,11 @@
 #include "rp2040_uart.h"
-#include "rp2040_uart_prv.h"
 #include "RP2040.h"
 #include "bsp_clock_cfg.h"
+
+#define RP2040_UART_OPEN               (0x55415254U)    /* "UART" */
+#define RP2040_UART_CLOSED             (0x00000000U)
+
+#define RP2040_UART_PRV_CHANNEL_MAX    (2U)
 
 static uint32_t rp2040_uart_base_get(uint8_t channel);
 static uint32_t rp2040_uart_reset_bit(uint8_t channel);
