@@ -1,6 +1,6 @@
 <div align="center">
   
-![Repo Traffic](https://komarev.com/ghpvc/?username=embedded-mcu-bare-metal&label=Repo+Traffic&color=blue&style=flat-square&abbreviated=false)
+![Repo Traffic](https://ak-badge-proxy.caotrongphuoc.workers.dev/?username=embedded-mcu-bare-metal&label=Repo+Traffic&color=blue&style=flat-square)
 
 </div>
 
