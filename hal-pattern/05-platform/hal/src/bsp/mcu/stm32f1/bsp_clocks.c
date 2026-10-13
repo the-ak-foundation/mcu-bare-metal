@@ -40,9 +40,21 @@ void SystemCoreClockUpdate(void)
 	SystemCoreClock = BSP_CFG_SYSCLK_HZ;
 }
 
+static void bsp_prv_hse_init(void)
+{
+	/* Enable HSE and wait until the oscillator is stable. */
+	RCC->CR |= RCC_CR_HSEON;
+
+	while (0U == (RCC->CR & RCC_CR_HSERDY))
+	{
+	}
+}
+
 /** Initializes the system clocks: HSE -> PLL -> clk_sys 72 MHz.
- *  Body filled in follow-up steps 7, 8, 9. */
+ *  Body filled in follow-up steps 8, 9. */
 void bsp_clock_init(void)
 {
+	bsp_prv_hse_init();
+
 	SystemCoreClockUpdate();
 }
